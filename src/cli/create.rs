@@ -15,8 +15,8 @@ pub fn run(app: &clap::ArgMatches, output: &mut WRITE, scheme: &mut SCHEME) -> R
     var::pipe::concatinate(scheme);
 
     let palette: Vec<String>;
-    if let Some(arg) = sub.value_of("palette") {
-        match arg.as_ref() {
+    if let Some(content) = scheme.palette() {
+        match content.as_str() {
             "pigment" => {
                 palette = palette::palette_from_image(scheme.image().clone().unwrap());
                 helper::write_temp_file("lule_palette", palette.join("\n").as_bytes());
@@ -24,6 +24,7 @@ pub fn run(app: &clap::ArgMatches, output: &mut WRITE, scheme: &mut SCHEME) -> R
             },
             _ => unreachable!(),
         };
+
     }
 
     output.set_theme(scheme.theme().clone().unwrap());

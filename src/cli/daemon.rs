@@ -54,7 +54,7 @@ pub fn run(app: &clap::ArgMatches, output: &mut WRITE, scheme: &mut SCHEME) -> R
     Ok(())
 }
 
-fn deamoned(_output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
+fn deamoned(output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
     let (sigtermtx, sigtermrx) = channel::<String>();
     let mut sigterm = std::env::temp_dir(); sigterm.push("lule_sigterm");
     thread::spawn(move|| { read_file(sigterm, sigtermtx); });
@@ -63,31 +63,25 @@ fn deamoned(_output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
     let timer = scheme.looop().unwrap().clone();
     thread::spawn(move || { time_to_sleep(timer, timetx ) });
 
-    let mut lule_pipe = std::env::temp_dir();
-    lule_pipe.push("lule_pipe");
+    let mut lule_pipe = std::env::temp_dir(); lule_pipe.push("lule_pipe");
+    let (pipetx, piperx) = channel::<String>();
+    thread::spawn(move|| { read_file(lule_pipe, pipetx); });
 
     loop {
-        let (pipetx, piperx) = channel::<String>();
-        let filepath = lule_pipe.clone();
-        thread::spawn(move|| { read_file(filepath, pipetx); });
         'inner: loop {
             if let Ok(content) = piperx.try_recv() {
                 if let Ok(profile) = write::json_to_scheme(content.clone()) {
                     let jsonified = serde_json::to_value(&profile).unwrap();
                     println!("{}", jsonified);
-                    // set_colors(output, scheme, jsonified);
+                    set_colors(output, scheme, profile)?;
                 } else {
                     println!("{} \n\n^^^ is not a valid json", content);
                 }
-                std::fs::remove_file(lule_pipe.to_str().unwrap()).ok();
                 break 'inner;
             };
             if timerx.try_recv().is_ok() { 
-                helper::write_to_file(lule_pipe.clone(), "stop".as_bytes());
-                std::fs::remove_file(lule_pipe.to_str().unwrap()).ok();
                 break 'inner 
             } else if sigtermrx.try_recv().is_ok() { 
-                std::fs::remove_file(lule_pipe.to_str().unwrap()).ok();
                 std::process::exit(0);
             }
             thread::sleep(time::Duration::from_millis(10));
@@ -101,11 +95,13 @@ fn set_colors(output: &mut WRITE, scheme: &mut SCHEME, new_scheme: SCHEME) -> Re
 }
 
 fn read_file(pipe_name: PathBuf, sender: Sender<String>) {
-    let pipe = fifo::Pipe::new(pipe_name);
-    pipe.ensure_exists().unwrap();
-    let reader = pipe.open_read();
-    let content = reader.string().unwrap();
-    sender.send(content).ok();
+    loop{
+        let pipe = fifo::Pipe::new(pipe_name.clone());
+        pipe.ensure_exists().unwrap();
+        let reader = pipe.open_read();
+        let content = reader.string().unwrap();
+        sender.send(content).ok();
+    }
 }
 
 

@@ -16,7 +16,6 @@ pub fn run(app: &clap::ArgMatches, _output: &mut WRITE, scheme: &mut SCHEME) -> 
     if atty::isnt(atty::Stream::Stdout) {
         println!("{}", scheme_json);
     } else {
-        println!("{}", "---");
         let mut pipe_name = std::env::temp_dir();
         pipe_name.push("lule_pipe");
         helper::write_to_file(pipe_name, format_scheme.as_bytes());
