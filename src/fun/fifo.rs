@@ -4,6 +4,7 @@
 
 use std::path::{PathBuf, Path};
 use nix::sys::stat::Mode;
+use std::io::prelude::*;
 
 /// Attempt to create a new Unix named pipe/FIFO on disk.
 fn create_pipe<P: ?Sized + nix::NixPath>(path: &P, mode: Option<Mode>) -> nix::Result<()> {
@@ -77,14 +78,23 @@ impl Reader {
         self.path.ensure_exists()?;
         Ok(self)
     }
+    /// Reads all bytes from the pipe no asyc.
+    pub fn read(&self) -> std::io::Result<Vec<u8>> {
+        std::fs::read(&self.path.inner)
+    }
     /// Reads all bytes from the pipe.
     /// The returned Future will resolve when something is written to the pipe.
-    pub async fn read(&self) -> tokio::io::Result<Vec<u8>> {
+    pub async fn read_async(&self) -> tokio::io::Result<Vec<u8>> {
         tokio::fs::read(&self.path.inner).await
+    }
+    /// Reads a String from the pipe no async.
+    /// The returned Future will resolve when something is written to the pipe.
+    pub fn string(&self) -> std::io::Result<String> {
+        std::fs::read_to_string(&self.path.inner)
     }
     /// Reads a String from the pipe.
     /// The returned Future will resolve when something is written to the pipe.
-    pub async fn read_string(&self) -> tokio::io::Result<String> {
+    pub async fn string_async(&self) -> tokio::io::Result<String> {
         tokio::fs::read_to_string(&self.path.inner).await
     }
 }
@@ -115,13 +125,25 @@ impl Writer {
         Ok(self)
     }
     /// Writes byte data to the pipe.
+    pub fn write(&self, data: &[u8]) -> std::io::Result<()> {
+        let mut buffer = std::fs::File::create(&self.path.inner.to_str().unwrap())?;
+        buffer.write(data)?;
+        Ok(())
+    }
+    /// Writes byte data to the pipe.
     /// The returned Future will resolve when the bytes are read from the pipe.
-    pub async fn write(&self, data: &[u8]) -> tokio::io::Result<()> {
+    pub async fn write_async(&self, data: &[u8]) -> tokio::io::Result<()> {
         self._write(data).await
     }
     /// Writes &str data to the pipe.
+    pub fn string(&self, data: String) -> std::io::Result<()> {
+        let mut buffer = std::fs::File::create(&self.path.inner.to_str().unwrap())?;
+        buffer.write(data.as_bytes())?;
+        Ok(())
+    }
+    /// Writes &str data to the pipe.
     /// The returned Future will resolve when the string is read from the pipe.
-    pub async fn write_str(&self, data: &str) -> tokio::io::Result<()> {
+    pub async fn string_async(&self, data: &str) -> tokio::io::Result<()> {
         self._write(data.as_bytes()).await
     }
 }

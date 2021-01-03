@@ -1,4 +1,4 @@
-// use anyhow::{Result, Context};
+use anyhow::{Result, Context};
 use serde_json::Value;
 use std::collections::HashMap as Map;
 use std::path::PathBuf;
@@ -80,7 +80,7 @@ pub fn output_to_json(output: &WRITE, map: bool) -> Value {
     }
 }
 
-// pub fn json_to_scheme(data: String) -> Result<SCHEME> {
-//     let scheme: SCHEME = serde_json::from_str(&data).context("something got fucked-up reaading json")?;
-//     Ok(scheme)
-// }
+pub fn json_to_scheme(data: String) -> Result<SCHEME> {
+    let scheme: SCHEME = serde_json::from_str(&data).context("something got fucked-up reaading json")?;
+    Ok(scheme)
+}
