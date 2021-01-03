@@ -154,6 +154,14 @@ pub fn build_cli(show_logo: bool) -> App<'static, 'static> {
                         .default_value("300")
                         .value_name("SECONDS")
                 )
+                .arg(
+                    Arg::with_name("action")
+                        .help("action to take")
+                        .possible_values(&["start", "stop", "detach"])
+                        .takes_value(true)
+                        .required(true)
+                        .last(true)
+                )
         )
         .subcommand(
             SubCommand::with_name("colors")
@@ -179,6 +187,7 @@ pub fn build_cli(show_logo: bool) -> App<'static, 'static> {
                         .value_name("THEME")
                         .possible_values(&["dark", "light"])
                         .default_value("dark")
+                        .required(true)
                 )
         )
         .subcommand(
