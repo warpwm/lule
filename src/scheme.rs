@@ -73,6 +73,25 @@ impl SCHEME {
             mixes: None 
         }
     }
+    pub fn modi(&mut self, new: &SCHEME) -> &Self {
+        if let Some(value) = new.colors() { self.colors = Some(value.clone()); }
+        if let Some(value) = new.image() { self.image = Some(value.clone()); }
+        if let Some(value) = new.scheme() { self.scheme = Some(value.clone()); }
+        if let Some(value) = new.walldir() { self.walldir = Some(value.clone()); }
+        if let Some(value) = new.config() { self.config = Some(value.clone()); }
+        if let Some(value) = new.cache() { self.cache = Some(value.clone()); }
+        if let Some(value) = new.script() { self.script = Some(value.clone()); }
+        if let Some(value) = new.theme() { self.theme = Some(value.clone()); }
+        if let Some(value) = new.palette() { self.palette = Some(value.clone()); }
+        if let Some(value) = new.sort() { self.sort = Some(value.clone()); }
+        if let Some(value) = new.saturation() { self.saturation = Some(value.clone()); }
+        if let Some(value) = new.illumination() { self.illumination = Some(value.clone()); }
+        if let Some(value) = new.hue() { self.hue = Some(value.clone()); }
+        if let Some(value) = new.difference() { self.difference = Some(value.clone()); }
+        if let Some(value) = new.blend() { self.blend = Some(value.clone()); }
+        if let Some(value) = new.mixes() { self.mixes = Some(value.clone()); }
+        self
+    }
 }
 
 
