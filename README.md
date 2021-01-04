@@ -6,7 +6,7 @@ lule
 ===
 
 A command line tool to generate 8bit ANSI colors from wallpaper (an enhanced version of pywal but in rust)
-There is the old bash version in: https://github.com/bresilla/lule_bash
+There is the old bash version in: https://github.com/warpwm/lule_bash
 
 ```
 lule --image=/some/path/of/an/image.jpg --theme=light -- set

@@ -7,11 +7,9 @@ use std::sync::mpsc::{channel, Sender};
 use crate::var;
 use crate::helper;
 use crate::scheme::*;
-use crate::gen::palette;
-use crate::gen::generate;
-use crate::gen::execute;
 use crate::gen::write;
 use crate::fun::fifo;
+use crate::cli::create;
 
 pub fn run(app: &clap::ArgMatches, output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
     let sub = app.subcommand_matches("daemon").unwrap();
@@ -58,6 +56,8 @@ pub fn run(app: &clap::ArgMatches, output: &mut WRITE, scheme: &mut SCHEME) -> R
 }
 
 fn deamoned(output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
+    create::new_palette(output, scheme)?;
+
     let (sigtermtx, sigtermrx) = channel::<String>();
     let mut sigterm = std::env::temp_dir(); sigterm.push("lule_sigterm");
     thread::spawn(move|| { read_file(sigterm, sigtermtx); });
@@ -71,6 +71,8 @@ fn deamoned(output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
     thread::spawn(move|| { read_file(lule_pipe, pipetx); });
 
     loop {
+        let jsonified = serde_json::to_value(&scheme).unwrap();
+        println!("{}", serde_json::to_string_pretty(&jsonified).unwrap());
         'inner: loop {
             if let Ok(content) = piperx.try_recv() {
                 if let Ok(profile) = write::json_to_scheme(content.clone()) {
@@ -82,6 +84,7 @@ fn deamoned(output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
             };
             if timerx.try_recv().is_ok() { 
                 println!("time-looped");
+                create::new_palette(output, scheme)?;
                 break 'inner 
             } else if sigtermrx.try_recv().is_ok() { 
                 std::process::exit(0);
@@ -92,37 +95,10 @@ fn deamoned(output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
 }
 
 fn set_colors(output: &mut WRITE, scheme: &mut SCHEME, new_scheme: &mut SCHEME) -> Result<()> {
-    let jsonified_old = serde_json::to_value(&scheme).unwrap();
-    println!("{}", serde_json::to_string_pretty(&jsonified_old).unwrap());
-
-    new_scheme.set_walldir(scheme.walldir().clone());
-    new_scheme.set_image(scheme.image().clone());
+    new_scheme.set_walldir(None);
+    new_scheme.set_image(None);
     scheme.modi(new_scheme);
-
-    let palette: Vec<String>;
-    if let Some(content) = scheme.palette() {
-        match content.as_str() {
-            "pigment" => {
-                palette = palette::palette_from_image(scheme.image().clone().unwrap());
-                helper::write_temp_file("lule_palette", palette.join("\n").as_bytes());
-                scheme.set_colors(Some(palette));
-            },
-            _ => unreachable!(),
-        };
-    }
-
-    output.set_theme(scheme.theme().clone().unwrap());
-    output.set_colors(generate::get_all_colors(scheme));
-    output.set_wallpaper(scheme.image().clone().unwrap());
-    
-    let values = write::output_to_json(output, false);
-    write::write_temp(&output);
-    write::write_cache(&scheme);
-    write::write_cache_json(scheme, values);
-    execute::external_command();
-
-    let jsonified_new = serde_json::to_value(&scheme).unwrap();
-    println!("{}", serde_json::to_string_pretty(&jsonified_new).unwrap());
+    create::old_palette(output, scheme)?;
     Ok(())
 }
 

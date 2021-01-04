@@ -1,10 +1,9 @@
 use crate::scheme::*;
-use crate::helper;
 
 pub fn concatinate(scheme: &mut SCHEME) {
     let env_lule_w = std::env::var("LULE_W");
     if env_lule_w.is_ok(){
-        scheme.set_image(Some(helper::random_image(&env_lule_w.unwrap())));
+        scheme.set_walldir(Some(env_lule_w.unwrap()));
     }
 
     let env_lule_c = std::env::var("LULE_C");
