@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+use anyhow::Result;
 use crate::gen::generate;
 use crate::gen::palette;
 use crate::gen::write;
@@ -5,7 +7,6 @@ use crate::gen::execute;
 use crate::var;
 use crate::scheme::*;
 use crate::helper;
-use anyhow::Result;
 
 pub fn run(app: &clap::ArgMatches, output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
     let sub = app.subcommand_matches("create").unwrap();
@@ -36,7 +37,9 @@ pub fn run(app: &clap::ArgMatches, output: &mut WRITE, scheme: &mut SCHEME) -> R
 
 pub fn new_palette(output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
     let wallpaper = scheme.walldir().clone().unwrap();
-    scheme.set_image(Some(helper::random_image(&wallpaper)));
+    if scheme.image().is_none() {
+        scheme.set_image(Some(helper::random_image(&wallpaper)));
+    }
     println!("{}", &scheme.image().clone().unwrap());
 
     let palette: Vec<String>;
@@ -60,25 +63,34 @@ pub fn new_palette(output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
     write::write_temp(&output);
     write::write_cache(&scheme);
     write::write_cache_json(scheme, values);
-    execute::external_command();
+    if let Some(_) = scheme.script() {
+        execute::external_command();
+    }
+    scheme.set_image(None);
     Ok(())
 }
 
 
 pub fn old_palette(output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
-    let mut lule_palette = std::env::temp_dir(); lule_palette.push("lule_palette");
-    scheme.set_colors(Some(helper::lines_to_vec(lule_palette)));
+    if let Some(cachepath) = scheme.cache().clone() {
+        let mut palette_temp = PathBuf::from(&cachepath); palette_temp.push("palette");
+        scheme.set_colors(Some(helper::lines_to_vec(palette_temp)));
 
-    output.set_theme(scheme.theme().clone().unwrap());
+        let mut wall_temp = PathBuf::from(&cachepath); wall_temp.push("wallpaper");
+        if let Ok(content) = helper::file_to_string(wall_temp) {
+            output.set_wallpaper(content);
+        }
+
+        let mut theme_temp = PathBuf::from(&cachepath); theme_temp.push("theme");
+        if let Ok(content) = helper::file_to_string(theme_temp) {
+            output.set_theme(content);
+        }
+    }
+
     output.set_colors(generate::get_all_colors(scheme));
-
-    let mut lule_wallpaper = std::env::temp_dir(); lule_wallpaper.push("lule_wallpaper");
-    output.set_wallpaper(helper::file_to_string(lule_wallpaper).unwrap());
-
-    let values = write::output_to_json(output, false);
     write::write_temp(&output);
     write::write_cache(&scheme);
-    write::write_cache_json(scheme, values);
+    write::write_cache_json(scheme, write::output_to_json(output, false));
     execute::external_command();
     Ok(())
 }

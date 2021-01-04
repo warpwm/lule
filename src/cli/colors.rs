@@ -1,11 +1,12 @@
+use anyhow::Result;
 use std::path::PathBuf;
+use crate::var;
 use crate::gen::palette;
 use crate::show::format;
 use crate::show::viuwer;
 use crate::scheme::*;
 use crate::helper::*;
-use crate::var;
-use anyhow::Result;
+use crate::cli::create;
 
 pub fn run(app: &clap::ArgMatches, output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
     let sub = app.subcommand_matches("colors").unwrap();
@@ -13,6 +14,12 @@ pub fn run(app: &clap::ArgMatches, output: &mut WRITE, scheme: &mut SCHEME) -> R
     var::envi::concatinate(scheme);
     var::args::concatinate(app, scheme);
     var::pipe::concatinate(scheme);
+
+
+    scheme.set_script(None);
+    if sub.is_present("gen") {
+        create::new_palette(output, scheme)?;
+    }
 
 
     if let Some(cachepath) = scheme.cache().clone() {

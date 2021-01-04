@@ -167,6 +167,11 @@ pub fn build_cli(show_logo: bool) -> App<'static, 'static> {
             SubCommand::with_name("colors")
                 .about("Display current colors in terminal")
                 .arg(
+                    Arg::with_name("gen")
+                        .help("generate new colors - just show them - not apply")
+                        .short("g")
+                )
+                .arg(
                     Arg::with_name("action")
                         .help("action to take")
                         .possible_values(&["image", "ansii", "list", "mix"])

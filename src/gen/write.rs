@@ -33,6 +33,10 @@ pub fn write_cache(scheme: &SCHEME) {
     let lule_theme = pather(vec!["lule_theme"], env::temp_dir());
     let theme = pather(vec!["theme"], PathBuf::from(cache_path));
     copy_to(lule_theme, theme);
+
+    let lule_palette = pather(vec!["lule_palette"], env::temp_dir());
+    let theme = pather(vec!["palette"], PathBuf::from(cache_path));
+    copy_to(lule_palette, theme);
 }
 
 pub fn write_cache_json(scheme: &mut SCHEME, values: Value) {
