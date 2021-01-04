@@ -18,7 +18,7 @@ pub fn show_colors(output: &WRITE, colrange: Range::<usize>, padding: usize) {
                 output.colors()[i].to_rgba().r.into(),
                 output.colors()[i].to_rgba().g.into(), 
                 output.colors()[i].to_rgba().b.into()
-            ).color( if output.colors()[i].to_lab().l < 50.0 { "white" } else { "black" } )
+            ).color( if output.colors()[i].to_lab().l < 30.0 { "white" } else { "black" } )
             );
     }
     println!();
@@ -45,7 +45,7 @@ pub fn show_specified_colors(colors: Vec<pastel::Color>, padding: usize) {
                 colors[i].to_rgba().r.into(),
                 colors[i].to_rgba().g.into(), 
                 colors[i].to_rgba().b.into()
-            ).color( if colors[i].to_lab().l < 50.0 { "white" } else { "black" } )
+            ).color( if colors[i].to_lab().l < 30.0 { "white" } else { "black" } )
         );
     }
 }

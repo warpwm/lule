@@ -23,13 +23,15 @@ pub fn run(app: &clap::ArgMatches, output: &mut WRITE, scheme: &mut SCHEME) -> R
         println!("{}", "---");
     } else {
         if let Some(arg) = sub.value_of("action") {
+            let mut lule_pipe = std::env::temp_dir(); lule_pipe.push("lule_pipe");
             if arg ==  "start" {
                 deamoned(output, scheme)?;
             }
+            if arg ==  "next" {
+                helper::write_to_file(lule_pipe.clone(), "stop".as_bytes());
+            }
             if arg ==  "stop" {
-                let mut sigterm = std::env::temp_dir();
-                sigterm.push("lule_sigterm");
-                helper::write_to_file(sigterm, "stop".as_bytes());
+                helper::write_to_file(lule_pipe.clone(), "stop".as_bytes());
             }
             if arg ==  "detach" {
                 let stdout = std::fs::File::create("/tmp/daemon.out").unwrap();
@@ -53,14 +55,11 @@ pub fn run(app: &clap::ArgMatches, output: &mut WRITE, scheme: &mut SCHEME) -> R
         }
     }
     Ok(())
+
 }
 
 fn deamoned(output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
     create::new_palette(output, scheme)?;
-
-    let (sigtermtx, sigtermrx) = channel::<String>();
-    let mut sigterm = std::env::temp_dir(); sigterm.push("lule_sigterm");
-    thread::spawn(move|| { read_file(sigterm, sigtermtx); });
 
     let (timetx, timerx) = channel::<bool>();
     let timer = scheme.looop().unwrap().clone();
@@ -77,17 +76,20 @@ fn deamoned(output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
             if let Ok(content) = piperx.try_recv() {
                 if let Ok(profile) = write::json_to_scheme(content.clone()) {
                     set_colors(output, scheme, &mut profile.clone())?;
+                    break 'inner;
+                } else if content.trim() == "next" {
+                    create::new_palette(output, scheme)?;
+                    break 'inner;
+                } else if content.trim() == "stop" {
+                    std::process::exit(0);
                 } else {
                     println!("{} \n\n^^^ is not a valid json", content);
                 }
-                break 'inner;
             };
             if timerx.try_recv().is_ok() { 
                 println!("time-looped");
                 create::new_palette(output, scheme)?;
                 break 'inner 
-            } else if sigtermrx.try_recv().is_ok() { 
-                std::process::exit(0);
             }
             thread::sleep(time::Duration::from_millis(10));
         }
