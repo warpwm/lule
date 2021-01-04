@@ -198,5 +198,14 @@ pub fn build_cli(show_logo: bool) -> App<'static, 'static> {
         .subcommand(
             SubCommand::with_name("test")
                 .setting(AppSettings::Hidden)
+                .arg(
+                    Arg::with_name("image")
+                        .help("specify the image to extract colors from")
+                        .long("image")
+                        .visible_aliases(&["source"])
+                        .takes_value(true)
+                        .value_name("FLEPATH")
+                        .conflicts_with("wallpath")
+                )
         )
 }

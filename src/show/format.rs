@@ -32,3 +32,20 @@ pub fn show_pastel_colors(output: &WRITE, colrange: Range::<usize>) {
         canvas::show_color(&mut stdout_lock_handle, ansi::Mode::TrueColor, &output.colors()[i], i).ok();
     }
 }
+
+pub fn show_specified_colors(colors: Vec<pastel::Color>, padding: usize) {
+    for i in 0..colors.len() {
+        let val = format!("{}{}{}",
+            " ".repeat(padding),
+            colors[i].to_rgb_hex_string(true), 
+            " ".repeat(padding));
+        if (i % 12 == 4 && i > 16) || (i == 16 || i == 8) { println!() };
+        print!("{}",
+            val.on_truecolor(
+                colors[i].to_rgba().r.into(),
+                colors[i].to_rgba().g.into(), 
+                colors[i].to_rgba().b.into()
+            ).color( if colors[i].to_lab().l < 50.0 { "white" } else { "black" } )
+        );
+    }
+}

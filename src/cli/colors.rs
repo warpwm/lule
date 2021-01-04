@@ -59,9 +59,8 @@ pub fn run(app: &clap::ArgMatches, output: &mut WRITE, scheme: &mut SCHEME) -> R
             } else if arg ==  "list" {
                 format::show_pastel_colors(&output, 0..output.colors().len());
             } else if arg ==  "mix" {
-                println!("Wallpaper:");
                 viuwer::display_image(&output, (cols).into(), (rows -3).into()).ok();
-                println!("Colors:");
+                println!("Wallpaper: {}, \t\t Colors: 1-16", output.wallpaper());
                 format::show_colors(&output, 0..16, ((cols - 56) / 16).into());
             }
         }
