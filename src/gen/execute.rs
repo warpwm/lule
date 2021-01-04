@@ -14,3 +14,11 @@ pub fn external_command(scheme: &mut SCHEME){
                 .expect("failed to execute process").stdout;
 }
 
+pub fn command_execution(scheme: &mut SCHEME) {
+    if let Some(scripts) = scheme.scripts() {
+        for script in scripts.iter() {
+            println!("{}", script)
+        }
+    }
+}
+

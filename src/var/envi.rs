@@ -20,7 +20,6 @@ pub fn concatinate(scheme: &mut SCHEME) {
             }
             Some(vec) => {
                 newvec.append(&mut vec.clone());
-                newvec.retain(|x| std::fs::metadata(x).is_ok());
                 scheme.set_scripts(Some(newvec));
             }
         }

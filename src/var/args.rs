@@ -1,7 +1,6 @@
 use clap;
 use crate::scheme::*;
 use crate::helper;
-use std::fs;
 
 pub fn concatinate(app: &clap::ArgMatches, scheme: &mut SCHEME) {
 
@@ -14,7 +13,6 @@ pub fn concatinate(app: &clap::ArgMatches, scheme: &mut SCHEME) {
         for val in vals {
             scripts.push(val.to_string())
         }
-        scripts.retain(|x| fs::metadata(x).is_ok());
         scheme.set_scripts(Some(scripts));
     }
 
@@ -25,9 +23,7 @@ pub fn concatinate(app: &clap::ArgMatches, scheme: &mut SCHEME) {
             let s: Vec<&str> = val.split_terminator(':').collect();
             // TODO: better error
             if s.len() == 2 { 
-                if fs::metadata(s[0]).is_ok() && fs::metadata(s[1]).is_ok() {
-                    patterns.push((s[0].to_string(), s[1].to_string()));
-                };
+                patterns.push((s[0].to_string(), s[1].to_string()));
             }
         }
         scheme.set_patterns(Some(patterns));
