@@ -44,11 +44,10 @@ pub fn pattern_gneration(output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> 
         for p in patterns.iter() {
             if std::fs::metadata(&p.0).is_ok() && std::fs::metadata(&p.1).is_ok() {
                 generate_template(PathBuf::from(&p.0), PathBuf::from(&p.1), output)?;
-                println!("{}::::{}", p.0, p.1)
+                println!("generating :{} into: {}", p.0, p.1)
             } else {
                 //TODO: better error handle
                 println!("{} or {} is not a valid file", p.0, p.1)
-
             }
         }
     }

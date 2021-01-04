@@ -28,7 +28,7 @@ pub fn run(app: &clap::ArgMatches, output: &mut WRITE, scheme: &mut SCHEME) -> R
             //     write::write_temp_colors(&output);
             //     write::write_cache_colors(scheme, values);
             //     write::copy_to_cache(scheme);
-            //     execute::external_command();
+            //     execute::command_execution();
             // }
         }
     }
@@ -62,7 +62,7 @@ pub fn new_palette(output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
     write::write_cache(&scheme);
     write::write_cache_json(scheme, values);
     if let Some(_) = scheme.scripts() {
-        execute::external_command(scheme);
+        execute::command_execution(scheme);
     }
     scheme.set_image(None);
     Ok(())
@@ -89,6 +89,6 @@ pub fn old_palette(output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
     write::write_temp(&output);
     write::write_cache(&scheme);
     write::write_cache_json(scheme, write::output_to_json(output, false));
-    execute::external_command(scheme);
+    execute::command_execution(scheme);
     Ok(())
 }
