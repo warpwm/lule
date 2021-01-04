@@ -16,7 +16,7 @@ pub fn run(app: &clap::ArgMatches, output: &mut WRITE, scheme: &mut SCHEME) -> R
     var::pipe::concatinate(scheme);
 
 
-    scheme.set_script(None);
+    scheme.set_scripts(None);
     if sub.is_present("gen") {
         create::new_palette(output, scheme)?;
     }

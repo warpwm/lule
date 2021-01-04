@@ -13,7 +13,17 @@ pub fn concatinate(scheme: &mut SCHEME) {
 
     let env_lule_s = std::env::var("LULE_S");
     if env_lule_s.is_ok(){
-        scheme.set_script(Some(env_lule_s.unwrap()));
+        let mut newvec = vec![env_lule_s.unwrap()];
+        match scheme.scripts() {
+            None => {
+                scheme.set_scripts(Some(newvec));
+            }
+            Some(vec) => {
+                newvec.append(&mut vec.clone());
+                newvec.retain(|x| std::fs::metadata(x).is_ok());
+                scheme.set_scripts(Some(newvec));
+            }
+        }
     }
 
     let env_lule_a = std::env::var("LULE_A");

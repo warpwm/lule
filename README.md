@@ -10,6 +10,7 @@ There is the old bash version in: https://github.com/warpwm/lule_bash
 
 ```
 lule --image=/some/path/of/an/image.jpg create -- set
+LULE_W=/some/dir/of/wallpapers; lule create -- set
 ```
 <hr>
 

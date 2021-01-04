@@ -40,14 +40,12 @@ pub fn new_palette(output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
     if scheme.image().is_none() {
         scheme.set_image(Some(helper::random_image(&wallpaper)));
     }
-    println!("{}", &scheme.image().clone().unwrap());
 
     let palette: Vec<String>;
     if let Some(content) = scheme.palette() {
         match content.as_str() {
             "pigment" => {
                 palette = palette::palette_from_image(scheme.image().clone().unwrap());
-                println!("{}", &scheme.image().clone().unwrap());
                 helper::write_temp_file("lule_palette", palette.join("\n").as_bytes());
                 scheme.set_colors(Some(palette));
             },
@@ -63,8 +61,8 @@ pub fn new_palette(output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
     write::write_temp(&output);
     write::write_cache(&scheme);
     write::write_cache_json(scheme, values);
-    if let Some(_) = scheme.script() {
-        execute::external_command();
+    if let Some(_) = scheme.scripts() {
+        execute::external_command(scheme);
     }
     scheme.set_image(None);
     Ok(())
@@ -91,6 +89,6 @@ pub fn old_palette(output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
     write::write_temp(&output);
     write::write_cache(&scheme);
     write::write_cache_json(scheme, write::output_to_json(output, false));
-    execute::external_command();
+    execute::external_command(scheme);
     Ok(())
 }

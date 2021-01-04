@@ -5,7 +5,7 @@ pub mod daemon;
 pub mod test;
 use colored::*;
 
-use clap::{crate_description, crate_name, crate_version, App, Arg, SubCommand, AppSettings};
+use clap::{crate_description, crate_name, crate_version, App, Arg, SubCommand, AppSettings, ArgSettings};
 
 /////UNSAFE
 fn string_to_unsafe_static_str(s: String) -> &'static str {
@@ -65,6 +65,7 @@ pub fn build_cli(show_logo: bool) -> App<'static, 'static> {
                 .value_name("PATH")
                 .help("specify a dir to load color configs from")
                 .takes_value(true)
+                .set(ArgSettings::RequireEquals)
         )
         .arg(
             Arg::with_name("cache")
@@ -72,6 +73,7 @@ pub fn build_cli(show_logo: bool) -> App<'static, 'static> {
                 .value_name("PATH")
                 .help("specify a dir where to dump color caches")
                 .takes_value(true)
+                .set(ArgSettings::RequireEquals)
         )
         .arg(
             Arg::with_name("pattern")
@@ -80,14 +82,16 @@ pub fn build_cli(show_logo: bool) -> App<'static, 'static> {
                 .help("specify a path to substitute pattern colors")
                 .takes_value(true)
                 .multiple(true)
+                .set(ArgSettings::RequireEquals)
         )
         .arg(
             Arg::with_name("script")
                 .long("script")
-                .value_name("PATH")
+                .value_name("PATH:PATH")
                 .help("specify a script to run afte colors are generated")
                 .takes_value(true)
                 .multiple(true)
+                .set(ArgSettings::RequireEquals)
         )
         .subcommand(
             SubCommand::with_name("create")
@@ -100,6 +104,7 @@ pub fn build_cli(show_logo: bool) -> App<'static, 'static> {
                         .takes_value(true)
                         .value_name("DIRPATH")
                         .conflicts_with("image")
+                        .set(ArgSettings::RequireEquals)
                 )
                 .arg(
                     Arg::with_name("palette")
@@ -109,6 +114,7 @@ pub fn build_cli(show_logo: bool) -> App<'static, 'static> {
                         .possible_values(&["schemer2", "pigment"])
                         .default_value("pigment")
                         .value_name("NAME")
+                        .set(ArgSettings::RequireEquals)
                 )
                 .arg(
                     Arg::with_name("scheme")
@@ -116,6 +122,7 @@ pub fn build_cli(show_logo: bool) -> App<'static, 'static> {
                         .value_name("NAME")
                         .help("specify a color scheme from configs to use")
                         .takes_value(true)
+                        .set(ArgSettings::RequireEquals)
                 )
                 .arg(
                     Arg::with_name("image")
@@ -125,6 +132,7 @@ pub fn build_cli(show_logo: bool) -> App<'static, 'static> {
                         .takes_value(true)
                         .value_name("FLEPATH")
                         .conflicts_with("wallpath")
+                        .set(ArgSettings::RequireEquals)
                 )
                 .arg(
                     Arg::with_name("theme")
@@ -134,6 +142,7 @@ pub fn build_cli(show_logo: bool) -> App<'static, 'static> {
                         .value_name("THEME")
                         .possible_values(&["dark", "light"])
                         .default_value("dark")
+                        .set(ArgSettings::RequireEquals)
                 )
                 .arg(
                     Arg::with_name("action")
@@ -153,6 +162,7 @@ pub fn build_cli(show_logo: bool) -> App<'static, 'static> {
                         .takes_value(true)
                         .default_value("300")
                         .value_name("SECONDS")
+                        .set(ArgSettings::RequireEquals)
                 )
                 .arg(
                     Arg::with_name("action")
@@ -193,6 +203,7 @@ pub fn build_cli(show_logo: bool) -> App<'static, 'static> {
                         .possible_values(&["dark", "light"])
                         .default_value("dark")
                         .required(true)
+                        .set(ArgSettings::RequireEquals)
                 )
         )
         .subcommand(
@@ -205,6 +216,7 @@ pub fn build_cli(show_logo: bool) -> App<'static, 'static> {
                         .visible_aliases(&["source"])
                         .takes_value(true)
                         .value_name("FLEPATH")
+                        .set(ArgSettings::RequireEquals)
                 )
                 .arg(
                     Arg::with_name("pattern")
@@ -213,6 +225,7 @@ pub fn build_cli(show_logo: bool) -> App<'static, 'static> {
                         .help("specify a path to substitute pattern colors")
                         .takes_value(true)
                         .multiple(true)
+                        .set(ArgSettings::RequireEquals)
                 )
         )
 }

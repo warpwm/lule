@@ -38,7 +38,8 @@ pub struct SCHEME {
     walldir: Option<String>,
     config: Option<String>,
     cache: Option<String>,
-    script: Option<String>,
+    scripts: Option<Vec<String>>,
+    patterns: Option<Vec<(String, String)>>,
     looop: Option<usize>,
     theme: Option<String>,
     palette: Option<String>,
@@ -60,7 +61,8 @@ impl SCHEME {
             walldir: None,
             config: None,
             cache: None,
-            script: None,
+            scripts: None,
+            patterns: None,
             looop: None,
             theme: None,
             palette: None,
@@ -80,7 +82,8 @@ impl SCHEME {
         if let Some(value) = new.walldir() { self.walldir = Some(value.clone()); }
         if let Some(value) = new.config() { self.config = Some(value.clone()); }
         if let Some(value) = new.cache() { self.cache = Some(value.clone()); }
-        if let Some(value) = new.script() { self.script = Some(value.clone()); }
+        if let Some(value) = new.scripts() { self.scripts = Some(value.clone()); }
+        if let Some(value) = new.patterns() { self.patterns = Some(value.clone()); }
         if let Some(value) = new.theme() { self.theme = Some(value.clone()); }
         if let Some(value) = new.palette() { self.palette = Some(value.clone()); }
         if let Some(value) = new.sort() { self.sort = Some(value.clone()); }
