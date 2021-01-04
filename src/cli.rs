@@ -207,5 +207,13 @@ pub fn build_cli(show_logo: bool) -> App<'static, 'static> {
                         .value_name("FLEPATH")
                         .conflicts_with("wallpath")
                 )
+                .arg(
+                    Arg::with_name("pattern")
+                        .long("pattern")
+                        .value_name("PATH")
+                        .help("specify a path to substitute pattern colors")
+                        .takes_value(true)
+                        .multiple(true)
+                )
         )
 }

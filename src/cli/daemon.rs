@@ -59,16 +59,15 @@ pub fn run(app: &clap::ArgMatches, output: &mut WRITE, scheme: &mut SCHEME) -> R
 }
 
 fn deamoned(output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
-    create::new_palette(output, scheme)?;
+    let mut lule_pipe = std::env::temp_dir(); lule_pipe.push("lule_pipe");
+    let (pipetx, piperx) = channel::<String>();
+    thread::spawn(move|| { read_file(lule_pipe, pipetx); });
 
     let (timetx, timerx) = channel::<bool>();
     let timer = scheme.looop().unwrap().clone();
     thread::spawn(move || { time_to_sleep(timer, timetx ) });
 
-    let mut lule_pipe = std::env::temp_dir(); lule_pipe.push("lule_pipe");
-    let (pipetx, piperx) = channel::<String>();
-    thread::spawn(move|| { read_file(lule_pipe, pipetx); });
-
+    create::new_palette(output, scheme)?;
     loop {
         let jsonified = serde_json::to_value(&scheme).unwrap();
         println!("{}", serde_json::to_string_pretty(&jsonified).unwrap());
