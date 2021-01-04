@@ -205,7 +205,6 @@ pub fn build_cli(show_logo: bool) -> App<'static, 'static> {
                         .visible_aliases(&["source"])
                         .takes_value(true)
                         .value_name("FLEPATH")
-                        .conflicts_with("wallpath")
                 )
                 .arg(
                     Arg::with_name("pattern")

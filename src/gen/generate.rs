@@ -79,11 +79,11 @@ pub fn gen_gradients(ac: pastel::Color, col0: pastel::Color, col15: pastel::Colo
     let mut gradients: Vec<pastel::Color> = Vec::new();
 
     gradients.push(black.clone());
-    let blacks = gen_shades(vec![&black, &col0], 2);
+    let blacks = gen_shades(vec![&black, &col0], 3);
     gradients.extend(blacks);
-    let middle = gen_shades(vec![&col0, &ac, &col15], 18);
+    let middle = gen_shades(vec![&col0, &ac, &col15], 16);
     gradients.extend(middle);
-    let whites = gen_shades(vec![&col15, &white], 2);
+    let whites = gen_shades(vec![&col15, &white], 3);
     gradients.extend(whites);
     gradients.push(white.clone());
 

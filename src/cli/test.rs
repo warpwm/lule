@@ -1,14 +1,22 @@
 use crate::scheme::*;
 use anyhow::Result;
+use std::env;
+
 use crate::var;
 use crate::gen::palette;
 use crate::gen::generate;
+use crate::gen::templ;
 use crate::helper;
 use crate::show::viuwer;
 use crate::show::format;
 
 pub fn run(app: &clap::ArgMatches, output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
-    test_colors(app, output, scheme)
+    test_colors(app, output, scheme)?;
+    let mut original = env::temp_dir(); original.push("lule_original");
+    let mut replaced = env::temp_dir(); replaced.push("lule_replaced");
+    templ::generate_template(original, replaced, output)?;
+
+    Ok(())
 }
 
 
