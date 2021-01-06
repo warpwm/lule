@@ -1,1 +1,1 @@
-@bresilla - Trim Bresilla <trim.bresilla@gmail.com>
+Trim Bresilla <trim.bresilla@gmail.com>
