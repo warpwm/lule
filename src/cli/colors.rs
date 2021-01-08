@@ -10,10 +10,7 @@ use crate::cli::create;
 
 pub fn run(app: &clap::ArgMatches, output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
     let sub = app.subcommand_matches("colors").unwrap();
-    var::defs::concatinate(scheme);
-    var::envi::concatinate(scheme);
-    var::args::concatinate(app, scheme);
-    var::pipe::concatinate(scheme);
+    var::concatinate(app, scheme);
 
 
     scheme.set_scripts(None);

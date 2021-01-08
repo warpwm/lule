@@ -5,10 +5,7 @@ use anyhow::Result;
 
 pub fn run(app: &clap::ArgMatches, _output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
     // let sub = app.subcommand_matches("config").unwrap();
-    var::defs::concatinate(scheme);
-    var::envi::concatinate(scheme);
-    var::args::concatinate(app, scheme);
-    var::pipe::concatinate(scheme);
+    var::concatinate(app, scheme);
 
 
     let scheme_json = serde_json::to_value(&scheme).unwrap();

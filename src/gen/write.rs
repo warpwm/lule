@@ -6,7 +6,7 @@ use std::env;
 use crate::scheme::*;
 use crate::helper::*;
 
-pub fn write_temp(output: &WRITE) {
+pub fn write_temp(output: &WRITE, scheme: &SCHEME) {
     let mut record = Vec::new();
     for color in output.colors().iter() {
         record.push(format!("{}", color.to_rgb_hex_string(true)));
@@ -14,6 +14,10 @@ pub fn write_temp(output: &WRITE) {
     write_temp_file("lule_colors", record.join("\n").as_bytes());
     write_temp_file("lule_wallpaper", output.wallpaper().as_bytes());
     write_temp_file("lule_theme", output.theme().as_bytes());
+    
+    let scheme_json = serde_json::to_value(&scheme).unwrap();
+    let format_scheme = format!("{}", scheme_json);
+    write_temp_file("lule_scheme", format_scheme.as_bytes());
 }
 
 pub fn write_cache(scheme: &SCHEME) {

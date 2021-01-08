@@ -10,10 +10,7 @@ use crate::helper;
 
 pub fn run(app: &clap::ArgMatches, output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
     let sub = app.subcommand_matches("create").unwrap();
-    var::defs::concatinate(scheme);
-    var::envi::concatinate(scheme);
-    var::args::concatinate(app, scheme);
-    var::pipe::concatinate(scheme);
+    var::concatinate(app, scheme);
 
     if atty::isnt(atty::Stream::Stdout) {
         // write::write_temp(&output);
@@ -23,13 +20,9 @@ pub fn run(app: &clap::ArgMatches, output: &mut WRITE, scheme: &mut SCHEME) -> R
             if arg ==  "set" {
                 new_palette(output, scheme)?;
             }
-            // if arg ==  "regen" {
-            //     generate::get_all_colors(output, scheme);
-            //     write::write_temp_colors(&output);
-            //     write::write_cache_colors(scheme, values);
-            //     write::copy_to_cache(scheme);
-            //     execute::command_execution();
-            // }
+            if arg ==  "regen" {
+                old_palette(output, scheme)?;
+            }
         }
     }
     Ok(())
@@ -58,7 +51,7 @@ pub fn new_palette(output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
     output.set_wallpaper(scheme.image().clone().unwrap());
 
     let values = write::output_to_json(output, false);
-    write::write_temp(&output);
+    write::write_temp(&output, &scheme);
     write::write_cache(&scheme);
     write::write_cache_json(scheme, values);
     if let Some(_) = scheme.scripts() {
@@ -86,7 +79,7 @@ pub fn old_palette(output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
     }
 
     output.set_colors(generate::get_all_colors(scheme));
-    write::write_temp(&output);
+    write::write_temp(&output, &scheme);
     write::write_cache(&scheme);
     write::write_cache_json(scheme, write::output_to_json(output, false));
     execute::command_execution(scheme);

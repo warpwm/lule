@@ -13,14 +13,11 @@ use crate::cli::create;
 
 pub fn run(app: &clap::ArgMatches, output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
     let sub = app.subcommand_matches("daemon").unwrap();
-    var::defs::concatinate(scheme);
-    var::envi::concatinate(scheme);
-    var::args::concatinate(app, scheme);
-    var::pipe::concatinate(scheme);
+    var::concatinate(app, scheme);
 
 
     if atty::isnt(atty::Stream::Stdout) {
-        println!("{}", "---");
+        println!("{}", "you cant pipe out form this deamon");
     } else {
         if let Some(arg) = sub.value_of("action") {
             let mut lule_pipe = std::env::temp_dir(); lule_pipe.push("lule_pipe");
@@ -36,15 +33,13 @@ pub fn run(app: &clap::ArgMatches, output: &mut WRITE, scheme: &mut SCHEME) -> R
             if arg ==  "detach" {
                 let stdout = std::fs::File::create("/tmp/daemon.out").unwrap();
                 let stderr = std::fs::File::create("/tmp/daemon.err").unwrap();
-                let mut lule_pid = std::env::temp_dir();
-                lule_pid.push("lule_pid");
+                let mut lule_pid = std::env::temp_dir(); lule_pid.push("lule.pid");
                 let lule = Daemonize::new()
-                    .pid_file(lule_pid.to_str().unwrap()) // Every method except `new` and `start`
-                    .chown_pid_file(true)      // is optional, see `Daemonize` documentation
-                    .working_directory("/tmp") // for default behaviour.
+                    .pid_file(lule_pid)
+                    .chown_pid_file(true)
+                    .working_directory("/tmp")
                     .user(1000)
                     .group(1000)
-                    .umask(0o777)
                     .stdout(stdout)
                     .stderr(stderr);
                 match lule.start() {
@@ -60,6 +55,7 @@ pub fn run(app: &clap::ArgMatches, output: &mut WRITE, scheme: &mut SCHEME) -> R
 
 fn deamoned(output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
     let mut lule_pipe = std::env::temp_dir(); lule_pipe.push("lule_pipe");
+    std::fs::remove_file(lule_pipe.clone()).ok();
     let (pipetx, piperx) = channel::<String>();
     thread::spawn(move|| { read_file(lule_pipe, pipetx); });
 
@@ -75,6 +71,7 @@ fn deamoned(output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
             if let Ok(content) = piperx.try_recv() {
                 if let Ok(profile) = write::json_to_scheme(content.clone()) {
                     set_colors(output, scheme, &mut profile.clone())?;
+                    create::old_palette(output, scheme)?;
                     break 'inner;
                 } else if content.trim() == "next" {
                     create::new_palette(output, scheme)?;
@@ -105,6 +102,7 @@ fn set_colors(output: &mut WRITE, scheme: &mut SCHEME, new_scheme: &mut SCHEME) 
 
 fn read_file(pipe_name: PathBuf, sender: Sender<String>) {
     loop{
+        std::fs::remove_file(pipe_name.clone()).ok();
         let pipe = fifo::Pipe::new(pipe_name.clone());
         pipe.ensure_exists().unwrap();
         let reader = pipe.open_read();
