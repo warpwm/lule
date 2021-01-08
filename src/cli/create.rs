@@ -61,7 +61,6 @@ pub fn new_palette(output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
     Ok(())
 }
 
-
 pub fn old_palette(output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
     if let Some(cachepath) = scheme.cache().clone() {
         let mut palette_temp = PathBuf::from(&cachepath); palette_temp.push("palette");
@@ -82,6 +81,8 @@ pub fn old_palette(output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
     write::write_temp(&output, &scheme);
     write::write_cache(&scheme);
     write::write_cache_json(scheme, write::output_to_json(output, false));
-    execute::command_execution(scheme);
+    if let Some(_) = scheme.scripts() {
+        execute::command_execution(scheme);
+    }
     Ok(())
 }

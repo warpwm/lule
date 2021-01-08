@@ -32,16 +32,20 @@ impl WRITE {
 #[derive(Serialize, Deserialize, Debug, Clone, CopyGetters, Getters, MutGetters, Setters)]
 #[getset(get = "pub", set = "pub", get_mut = "pub")]
 pub struct SCHEME {
-    colors: Option<Vec<String>>,
+    #[serde(skip)]
+    output: Option<Vec<String>>,
     image: Option<String>,
+    theme: Option<String>,
+    colors: Option<Vec<String>>,
     scheme: Option<String>,
     walldir: Option<String>,
+    #[serde(skip)]
     config: Option<String>,
+    #[serde(skip)]
     cache: Option<String>,
     scripts: Option<Vec<String>>,
     patterns: Option<Vec<(String, String)>>,
     looop: Option<usize>,
-    theme: Option<String>,
     palette: Option<String>,
     sort: Option<String>,
     saturation: Option<f32>,
@@ -55,6 +59,7 @@ pub struct SCHEME {
 impl SCHEME {
     pub fn init() -> Self {
         Self {
+            output: None,
             colors: None,
             image: None,
             scheme: None,
@@ -76,6 +81,7 @@ impl SCHEME {
         }
     }
     pub fn modi(&mut self, new: &SCHEME) -> &Self {
+        if let Some(value) = new.output() { self.output = Some(value.clone()); }
         if let Some(value) = new.colors() { self.colors = Some(value.clone()); }
         if let Some(value) = new.image() { self.image = Some(value.clone()); }
         if let Some(value) = new.scheme() { self.scheme = Some(value.clone()); }

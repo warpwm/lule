@@ -57,7 +57,7 @@ fn deamoned(output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
     let mut lule_pipe = std::env::temp_dir(); lule_pipe.push("lule_pipe");
     std::fs::remove_file(lule_pipe.clone()).ok();
     let (pipetx, piperx) = channel::<String>();
-    thread::spawn(move|| { read_file(lule_pipe, pipetx); });
+    thread::spawn(move|| { read_pipe(lule_pipe, pipetx); });
 
     let (timetx, timerx) = channel::<bool>();
     let timer = scheme.looop().unwrap().clone();
@@ -100,7 +100,7 @@ fn set_colors(output: &mut WRITE, scheme: &mut SCHEME, new_scheme: &mut SCHEME) 
     Ok(())
 }
 
-fn read_file(pipe_name: PathBuf, sender: Sender<String>) {
+fn read_pipe(pipe_name: PathBuf, sender: Sender<String>) {
     loop{
         std::fs::remove_file(pipe_name.clone()).ok();
         let pipe = fifo::Pipe::new(pipe_name.clone());

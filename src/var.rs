@@ -22,7 +22,7 @@ pub fn concatinate(app: &clap::ArgMatches, scheme: &mut SCHEME) {
         scheme.set_scripts(Some(scripts));
     }
 
-    if scheme.image().is_none() {
+    if scheme.image().is_none() && scheme.walldir().is_none() {
         eprintln!("{} {} {} {}", "error:".red().bold(), "Environment variable", "'$LULE_W'".yellow(), "is empty");
         eprintln!("{} {} {} {}", "error:".red().bold(), "Argument option", "'--wallpath'".yellow(), "is not set");
         eprintln!("{} {} {} {}", "error:".red().bold(), "Image argument", "'--image'".yellow(), "is not given");
