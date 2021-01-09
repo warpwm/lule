@@ -10,6 +10,7 @@ pub fn concatinate(scheme: &mut SCHEME) {
             *scheme = sh;
         }
     }
+    scheme.set_image(None);
 }
 
 fn make_scheme(data: String) -> Result<SCHEME> {

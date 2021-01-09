@@ -8,14 +8,14 @@ use crate::scheme::*;
 use crate::helper::*;
 use crate::cli::create;
 
-pub fn run(app: &clap::ArgMatches, output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
+pub fn run(app: &clap::ArgMatches, scheme: &mut SCHEME) -> Result<()> {
     let sub = app.subcommand_matches("colors").unwrap();
     var::concatinate(app, scheme);
 
 
     scheme.set_scripts(None);
     if sub.is_present("gen") {
-        create::new_palette(output, scheme)?;
+        create::new_palette(scheme)?;
     }
 
 
@@ -23,19 +23,19 @@ pub fn run(app: &clap::ArgMatches, output: &mut WRITE, scheme: &mut SCHEME) -> R
         let mut color_temp = PathBuf::from(&cachepath);
         color_temp.push("colors");
         if let Ok(content) = palette::colors_from_file(color_temp) {
-            output.set_colors(content);
+            scheme.set_colors(Some(content));
         }
 
         let mut wall_temp = PathBuf::from(&cachepath);
         wall_temp.push("wallpaper");
         if let Ok(content) = file_to_string(wall_temp) {
-            output.set_image(content);
+            scheme.set_image(Some(content));
         }
 
         let mut theme_temp = PathBuf::from(&cachepath);
         theme_temp.push("theme");
         if let Ok(content) = file_to_string(theme_temp) {
-            output.set_theme(content);
+            scheme.set_theme(Some(content));
         }
     }
 
@@ -45,20 +45,20 @@ pub fn run(app: &clap::ArgMatches, output: &mut WRITE, scheme: &mut SCHEME) -> R
     if let Some(arg) = sub.value_of("action") {
         // let values = write::get_json(output);
         if atty::isnt(atty::Stream::Stdout) {
-            for color in output.colors().iter() {
+            for color in scheme.colors().clone().unwrap().iter() {
                 println!("{}", color.to_rgb_hex_string(true));
             }
         } else {
             if arg ==  "image" {
-                viuwer::display_image(&output, (cols).into(), (rows -1).into()).ok();
+                viuwer::display_image(&scheme, (cols).into(), (rows -1).into()).ok();
             } else if arg ==  "ansii" {
-                format::show_colors(&output, 0..output.colors().len(), 4);
+                format::show_colors(&scheme, 0..255, 4);
             } else if arg ==  "list" {
-                format::show_pastel_colors(&output, 0..output.colors().len());
+                format::show_pastel_colors(&scheme, 0..255);
             } else if arg ==  "mix" {
-                viuwer::display_image(&output, (cols).into(), (rows -3).into()).ok();
-                println!("Wallpaper: {}, \t\t Colors: 1-16", output.image());
-                format::show_colors(&output, 0..16, ((cols - 56) / 16).into());
+                viuwer::display_image(&scheme, (cols).into(), (rows -3).into()).ok();
+                println!("Wallpaper: {}, \t\t Colors: 1-16", scheme.image().clone().unwrap());
+                format::show_colors(&scheme, 0..16, ((cols - 56) / 16).into());
             }
         }
     }

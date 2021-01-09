@@ -11,7 +11,7 @@ use crate::gen::write;
 use crate::fun::fifo;
 use crate::cli::create;
 
-pub fn run(app: &clap::ArgMatches, output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
+pub fn run(app: &clap::ArgMatches, scheme: &mut SCHEME) -> Result<()> {
     let sub = app.subcommand_matches("daemon").unwrap();
     var::concatinate(app, scheme);
 
@@ -22,7 +22,7 @@ pub fn run(app: &clap::ArgMatches, output: &mut WRITE, scheme: &mut SCHEME) -> R
         if let Some(arg) = sub.value_of("action") {
             let mut lule_pipe = std::env::temp_dir(); lule_pipe.push("lule_pipe");
             if arg ==  "start" {
-                deamoned(output, scheme)?;
+                deamoned(scheme)?;
             }
             if arg ==  "next" {
                 helper::write_to_file(lule_pipe.clone(), "stop".as_bytes());
@@ -43,7 +43,7 @@ pub fn run(app: &clap::ArgMatches, output: &mut WRITE, scheme: &mut SCHEME) -> R
                     .stdout(stdout)
                     .stderr(stderr);
                 match lule.start() {
-                    Ok(_) => deamoned(output, scheme)?,
+                    Ok(_) => deamoned(scheme)?,
                     Err(e) => eprintln!("Error, {}", e),
                 }
             }
@@ -53,7 +53,7 @@ pub fn run(app: &clap::ArgMatches, output: &mut WRITE, scheme: &mut SCHEME) -> R
 
 }
 
-fn deamoned(output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
+fn deamoned(scheme: &mut SCHEME) -> Result<()> {
     let mut lule_pipe = std::env::temp_dir(); lule_pipe.push("lule_pipe");
     std::fs::remove_file(lule_pipe.clone()).ok();
     let (pipetx, piperx) = channel::<String>();
@@ -63,18 +63,18 @@ fn deamoned(output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
     let timer = scheme.looop().unwrap().clone();
     thread::spawn(move || { time_to_sleep(timer, timetx ) });
 
-    create::new_palette(output, scheme)?;
+    create::new_palette(scheme)?;
     loop {
         let jsonified = serde_json::to_value(&scheme).unwrap();
         println!("{}", serde_json::to_string_pretty(&jsonified).unwrap());
         'inner: loop {
             if let Ok(content) = piperx.try_recv() {
                 if let Ok(profile) = write::json_to_scheme(content.clone()) {
-                    set_colors(output, scheme, &mut profile.clone())?;
-                    create::old_palette(output, scheme)?;
+                    set_colors(scheme, &mut profile.clone())?;
+                    create::old_palette(scheme)?;
                     break 'inner;
                 } else if content.trim() == "next" {
-                    create::new_palette(output, scheme)?;
+                    create::new_palette(scheme)?;
                     break 'inner;
                 } else if content.trim() == "stop" {
                     std::process::exit(0);
@@ -84,7 +84,7 @@ fn deamoned(output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
             };
             if timerx.try_recv().is_ok() { 
                 println!("time-looped");
-                create::new_palette(output, scheme)?;
+                create::new_palette(scheme)?;
                 break 'inner 
             }
             thread::sleep(time::Duration::from_millis(10));
@@ -92,11 +92,11 @@ fn deamoned(output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
     }
 }
 
-fn set_colors(output: &mut WRITE, scheme: &mut SCHEME, new_scheme: &mut SCHEME) -> Result<()> {
+fn set_colors(scheme: &mut SCHEME, new_scheme: &mut SCHEME) -> Result<()> {
     new_scheme.set_walldir(None);
     new_scheme.set_image(None);
     scheme.modi(new_scheme);
-    create::old_palette(output, scheme)?;
+    create::old_palette(scheme)?;
     Ok(())
 }
 

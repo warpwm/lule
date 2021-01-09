@@ -6,15 +6,20 @@ use std::env;
 use crate::scheme::*;
 use crate::helper::*;
 
-pub fn write_temp(output: &WRITE, scheme: &SCHEME) {
+pub fn write_temp(scheme: &SCHEME) {
     let mut record = Vec::new();
-    for color in output.colors().iter() {
-        record.push(format!("{}", color.to_rgb_hex_string(true)));
+    if let Some(colors) = scheme.colors() {
+        for color in colors.iter() {
+            record.push(format!("{}", color.to_rgb_hex_string(true)));
+        }
+        write_temp_file("lule_colors", record.join("\n").as_bytes());
     }
-    write_temp_file("lule_colors", record.join("\n").as_bytes());
-    write_temp_file("lule_wallpaper", output.image().as_bytes());
-    write_temp_file("lule_theme", output.theme().as_bytes());
-    
+    if let Some(wallpaper) = scheme.image() {
+        write_temp_file("lule_wallpaper", wallpaper.as_bytes());
+    }
+    if let Some(theme) = scheme.theme() {
+        write_temp_file("lule_theme", theme.as_bytes());
+    }
     let scheme_json = serde_json::to_value(&scheme).unwrap();
     let format_scheme = format!("{}", scheme_json);
     write_temp_file("lule_scheme", format_scheme.as_bytes());
@@ -53,31 +58,33 @@ pub fn write_cache_json(scheme: &mut SCHEME, values: Value) {
     write_to_file(cache_json, json_out.as_bytes());
 }
 
-pub fn output_to_json(output: &WRITE, map: bool) -> Value {
+pub fn output_to_json(scheme: &mut SCHEME, map: bool) -> Value {
     let mut color_map = Map::new();
     let mut color_vec = Vec::new();
-    for (key, color) in output.colors().iter().enumerate() {
-        let name = "color".to_string() + &key.to_string();
-        color_map.insert(name, pastel::HEX::from(color).to_string());
-        color_vec.push(color.to_rgb_hex_string(true));
+    if let Some(colors) = scheme.colors() {
+        for (key, color) in colors.iter().enumerate() {
+            let name = "color".to_string() + &key.to_string();
+            color_map.insert(name, pastel::HEX::from(color).to_string());
+            color_vec.push(color.to_rgb_hex_string(true));
+        }
     }
     let map_profile = ProfileMap {
-        wallpaper: output.image().to_string(),
-        theme: output.theme().to_string(),
+        wallpaper: scheme.image().clone().unwrap(),
+        theme: scheme.theme().clone().unwrap(),
         special: Special {
-            background: output.colors()[0].to_rgb_hex_string(true),
-            foreground: output.colors()[15].to_rgb_hex_string(true),
-            cursor: output.colors()[1].to_rgb_hex_string(true),
+            background: color_vec[0].clone(),
+            foreground: color_vec[15].clone(),
+            cursor: color_vec[1].clone()
         },
         colors: color_map
     };
     let vec_profile = ProfileVec {
-        wallpaper: output.image().to_string(),
-        theme: output.theme().to_string(),
+        wallpaper: scheme.image().clone().unwrap(),
+        theme: scheme.theme().clone().unwrap(),
         special: Special {
-            background: output.colors()[0].to_rgb_hex_string(true),
-            foreground: output.colors()[15].to_rgb_hex_string(true),
-            cursor: output.colors()[1].to_rgb_hex_string(true),
+            background: color_vec[0].clone(),
+            foreground: color_vec[15].clone(),
+            cursor: color_vec[1].clone()
         },
         colors: color_vec
     };

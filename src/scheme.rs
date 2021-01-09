@@ -4,36 +4,11 @@ extern crate getset;
 use getset::{CopyGetters, Getters, MutGetters, Setters};
 use std::collections::HashMap as Map;
 
-#[derive(Clone, CopyGetters, Getters, MutGetters, Setters)]
-#[getset(get = "pub", set = "pub", get_mut = "pub")]
-pub struct WRITE {
-    image: String,
-    theme: String,
-    colors: Vec<pastel::Color>,
-}
-
-impl WRITE {
-    pub fn new(image: String, theme: String, colors: Vec<pastel::Color>) -> Self {
-        Self {
-            image,
-            theme,
-            colors,
-        }
-    }
-    pub fn init() -> Self {
-        Self {
-            image: String::new(),
-            theme: String::new(),
-            colors: Vec::new(),
-        }
-    }
-}
-
 #[derive(Serialize, Deserialize, Debug, Clone, CopyGetters, Getters, MutGetters, Setters)]
 #[getset(get = "pub", set = "pub", get_mut = "pub")]
 pub struct SCHEME {
     #[serde(skip)]
-    colors: Option<Vec<String>>,
+    colors: Option<Vec<pastel::Color>>,
     image: Option<String>,
     theme: Option<String>,
     pigments: Option<Vec<String>>,

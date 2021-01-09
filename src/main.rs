@@ -18,7 +18,6 @@ use scheme::*;
 
 
 fn main() {
-    let mut output = WRITE::init();
     let mut scheme = SCHEME::init();
 
     let show_logo = if env::args().len() > 1 { false } else { true };
@@ -28,11 +27,11 @@ fn main() {
 
     if let Some(subcommand) = app.subcommand_name() {
         match subcommand {
-            "colors" => cli::colors::run(&app, &mut output, &mut scheme),
-            "create" => cli::create::run(&app, &mut output, &mut scheme),
-            "config" => cli::config::run(&app, &mut output, &mut scheme),
-            "daemon" => cli::daemon::run(&app, &mut output, &mut scheme),
-            "test" => cli::test::run(&app, &mut output, &mut scheme),
+            "colors" => cli::colors::run(&app, &mut scheme),
+            "create" => cli::create::run(&app, &mut scheme),
+            "config" => cli::config::run(&app, &mut scheme),
+            "daemon" => cli::daemon::run(&app, &mut scheme),
+            "test" => cli::test::run(&app, &mut scheme),
             _ => Ok(())
         }.ok();
     }

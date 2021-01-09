@@ -2,7 +2,7 @@ use std::io::stdout;
 use crossterm::{execute, terminal::{Clear, ClearType, ScrollUp, SetSize, size}};
 use crate::scheme::*;
 
-pub fn display_image(output: &WRITE, width: u32, height: u32) -> Result<(), Box<dyn std::error::Error>> {
+pub fn display_image(scheme: &SCHEME, width: u32, height: u32) -> Result<(), Box<dyn std::error::Error>> {
     let (cols, rows) = size()?;
     execute!(
         stdout(),
@@ -10,7 +10,7 @@ pub fn display_image(output: &WRITE, width: u32, height: u32) -> Result<(), Box<
         ScrollUp(5)
     )?;
 
-    let filename = output.image().clone();
+    let filename = scheme.image().clone().unwrap();
     let conf = viuer::Config {
         // restore_cursor: true,
         // use_kitty: true,

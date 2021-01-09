@@ -3,7 +3,7 @@ use crate::helper;
 use crate::var;
 use anyhow::Result;
 
-pub fn run(app: &clap::ArgMatches, _output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
+pub fn run(app: &clap::ArgMatches, scheme: &mut SCHEME) -> Result<()> {
     // let sub = app.subcommand_matches("config").unwrap();
     var::concatinate(app, scheme);
 

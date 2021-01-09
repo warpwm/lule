@@ -9,16 +9,16 @@ use crate::helper;
 use crate::show::viuwer;
 use crate::show::format;
 
-pub fn run(app: &clap::ArgMatches, output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
-    test_colors(app, output, scheme)?;
+pub fn run(app: &clap::ArgMatches, scheme: &mut SCHEME) -> Result<()> {
+    test_colors(app, scheme)?;
 
-    templ::pattern_gneration(output, scheme)?;
+    templ::pattern_gneration(scheme)?;
 
     Ok(())
 }
 
 
-fn test_colors(app: &clap::ArgMatches, output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
+fn test_colors(app: &clap::ArgMatches, scheme: &mut SCHEME) -> Result<()> {
     // let mut pipe_name = std::env::temp_dir();
     // pipe_name.push("lule_pipe");
 
@@ -36,20 +36,17 @@ fn test_colors(app: &clap::ArgMatches, output: &mut WRITE, scheme: &mut SCHEME) 
     let palette = palette::palette_from_image(scheme.image().clone().unwrap());
     scheme.set_pigments(Some(palette.clone()));
 
-    output.set_theme(scheme.theme().clone().unwrap());
-    output.set_colors(generate::get_all_colors(scheme));
-    output.set_image(scheme.image().clone().unwrap());
-
-
+    let allcolors = generate::get_all_colors(scheme);
+    scheme.set_colors(Some(allcolors));
 
     let (cols, rows) = crossterm::terminal::size().ok().unwrap();
-    viuwer::display_image(&output, (cols-10).into(), (rows -13).into()).ok();
+    viuwer::display_image(&scheme, (cols-10).into(), (rows -13).into()).ok();
     println!("Palette");
     let colors: Vec<pastel::Color> = palette.into_iter().map(|x| pastel::Color::from_hex(&x)).collect();
     format::show_specified_colors(colors.clone(), ((cols - 56) / 16).into());
     println!("\n6th");
     format::show_specified_colors(generate::gen_main_six(&colors), ((cols - 56) / 16).into());
     println!("\nColors");
-    format::show_colors(&output, 0..16, ((cols - 56) / 16).into());
+    format::show_colors(&scheme, 0..16, ((cols - 56) / 16).into());
     Ok(())
 }
