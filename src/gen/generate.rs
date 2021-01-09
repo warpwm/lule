@@ -93,7 +93,7 @@ pub fn gen_gradients(ac: pastel::Color, col0: pastel::Color, col15: pastel::Colo
 pub fn get_all_colors(scheme: &mut SCHEME) -> Vec<pastel::Color> {
     let theme = if scheme.theme().as_ref().unwrap_or(&"dark".to_string()) == "light" { false } else { true };
     let mut palette: Vec<pastel::Color> = Vec::new();
-    if let Some(ref cols) = scheme.colors() {
+    if let Some(ref cols) = scheme.pigments() {
         for c in cols.iter() {
             palette.push(pastel::Color::from_hex(c));
         }

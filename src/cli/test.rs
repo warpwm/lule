@@ -34,11 +34,11 @@ fn test_colors(app: &clap::ArgMatches, output: &mut WRITE, scheme: &mut SCHEME) 
     }
 
     let palette = palette::palette_from_image(scheme.image().clone().unwrap());
-    scheme.set_colors(Some(palette.clone()));
+    scheme.set_pigments(Some(palette.clone()));
 
     output.set_theme(scheme.theme().clone().unwrap());
     output.set_colors(generate::get_all_colors(scheme));
-    output.set_wallpaper(scheme.image().clone().unwrap());
+    output.set_image(scheme.image().clone().unwrap());
 
 
 

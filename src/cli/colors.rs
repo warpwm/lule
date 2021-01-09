@@ -29,7 +29,7 @@ pub fn run(app: &clap::ArgMatches, output: &mut WRITE, scheme: &mut SCHEME) -> R
         let mut wall_temp = PathBuf::from(&cachepath);
         wall_temp.push("wallpaper");
         if let Ok(content) = file_to_string(wall_temp) {
-            output.set_wallpaper(content);
+            output.set_image(content);
         }
 
         let mut theme_temp = PathBuf::from(&cachepath);
@@ -57,7 +57,7 @@ pub fn run(app: &clap::ArgMatches, output: &mut WRITE, scheme: &mut SCHEME) -> R
                 format::show_pastel_colors(&output, 0..output.colors().len());
             } else if arg ==  "mix" {
                 viuwer::display_image(&output, (cols).into(), (rows -3).into()).ok();
-                println!("Wallpaper: {}, \t\t Colors: 1-16", output.wallpaper());
+                println!("Wallpaper: {}, \t\t Colors: 1-16", output.image());
                 format::show_colors(&output, 0..16, ((cols - 56) / 16).into());
             }
         }

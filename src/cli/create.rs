@@ -40,7 +40,7 @@ pub fn new_palette(output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
             "pigment" => {
                 palette = palette::palette_from_image(scheme.image().clone().unwrap());
                 helper::write_temp_file("lule_palette", palette.join("\n").as_bytes());
-                scheme.set_colors(Some(palette));
+                scheme.set_pigments(Some(palette));
             },
             _ => unreachable!(),
         };
@@ -48,7 +48,7 @@ pub fn new_palette(output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
 
     output.set_theme(scheme.theme().clone().unwrap());
     output.set_colors(generate::get_all_colors(scheme));
-    output.set_wallpaper(scheme.image().clone().unwrap());
+    output.set_image(scheme.image().clone().unwrap());
 
     let values = write::output_to_json(output, false);
     write::write_temp(&output, &scheme);
@@ -64,11 +64,11 @@ pub fn new_palette(output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
 pub fn old_palette(output: &mut WRITE, scheme: &mut SCHEME) -> Result<()> {
     if let Some(cachepath) = scheme.cache().clone() {
         let mut palette_temp = PathBuf::from(&cachepath); palette_temp.push("palette");
-        scheme.set_colors(Some(helper::lines_to_vec(palette_temp)));
+        scheme.set_pigments(Some(helper::lines_to_vec(palette_temp)));
 
         let mut wall_temp = PathBuf::from(&cachepath); wall_temp.push("wallpaper");
         if let Ok(content) = helper::file_to_string(wall_temp) {
-            output.set_wallpaper(content);
+            output.set_image(content);
         }
 
         let mut theme_temp = PathBuf::from(&cachepath); theme_temp.push("theme");

@@ -12,7 +12,7 @@ pub fn write_temp(output: &WRITE, scheme: &SCHEME) {
         record.push(format!("{}", color.to_rgb_hex_string(true)));
     }
     write_temp_file("lule_colors", record.join("\n").as_bytes());
-    write_temp_file("lule_wallpaper", output.wallpaper().as_bytes());
+    write_temp_file("lule_wallpaper", output.image().as_bytes());
     write_temp_file("lule_theme", output.theme().as_bytes());
     
     let scheme_json = serde_json::to_value(&scheme).unwrap();
@@ -62,7 +62,7 @@ pub fn output_to_json(output: &WRITE, map: bool) -> Value {
         color_vec.push(color.to_rgb_hex_string(true));
     }
     let map_profile = ProfileMap {
-        wallpaper: output.wallpaper().to_string(),
+        wallpaper: output.image().to_string(),
         theme: output.theme().to_string(),
         special: Special {
             background: output.colors()[0].to_rgb_hex_string(true),
@@ -72,7 +72,7 @@ pub fn output_to_json(output: &WRITE, map: bool) -> Value {
         colors: color_map
     };
     let vec_profile = ProfileVec {
-        wallpaper: output.wallpaper().to_string(),
+        wallpaper: output.image().to_string(),
         theme: output.theme().to_string(),
         special: Special {
             background: output.colors()[0].to_rgb_hex_string(true),

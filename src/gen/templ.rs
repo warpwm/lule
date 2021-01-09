@@ -27,7 +27,7 @@ fn generate_template(original: PathBuf, replaced: PathBuf, output: &WRITE) -> Re
     data["cursor"] = output.colors()[1].to_rgb_hex_string(false).into();
     data["accent"] = output.colors()[1].to_rgb_hex_string(false).into();
 
-    data["wallpaper"] = output.wallpaper().into();
+    data["wallpaper"] = output.image().into();
     data["theme"] = output.theme().into();
 
     let context = templar::StandardContext::new();

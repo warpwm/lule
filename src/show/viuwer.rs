@@ -10,7 +10,7 @@ pub fn display_image(output: &WRITE, width: u32, height: u32) -> Result<(), Box<
         ScrollUp(5)
     )?;
 
-    let filename = output.wallpaper().clone();
+    let filename = output.image().clone();
     let conf = viuer::Config {
         // restore_cursor: true,
         // use_kitty: true,

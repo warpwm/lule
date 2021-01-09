@@ -7,22 +7,22 @@ use std::collections::HashMap as Map;
 #[derive(Clone, CopyGetters, Getters, MutGetters, Setters)]
 #[getset(get = "pub", set = "pub", get_mut = "pub")]
 pub struct WRITE {
-    wallpaper: String,
+    image: String,
     theme: String,
     colors: Vec<pastel::Color>,
 }
 
 impl WRITE {
-    pub fn new(wallpaper: String, theme: String, colors: Vec<pastel::Color>) -> Self {
+    pub fn new(image: String, theme: String, colors: Vec<pastel::Color>) -> Self {
         Self {
-            wallpaper,
+            image,
             theme,
             colors,
         }
     }
     pub fn init() -> Self {
         Self {
-            wallpaper: String::new(),
+            image: String::new(),
             theme: String::new(),
             colors: Vec::new(),
         }
@@ -33,10 +33,10 @@ impl WRITE {
 #[getset(get = "pub", set = "pub", get_mut = "pub")]
 pub struct SCHEME {
     #[serde(skip)]
-    output: Option<Vec<String>>,
+    colors: Option<Vec<String>>,
     image: Option<String>,
     theme: Option<String>,
-    colors: Option<Vec<String>>,
+    pigments: Option<Vec<String>>,
     scheme: Option<String>,
     walldir: Option<String>,
     #[serde(skip)]
@@ -59,8 +59,8 @@ pub struct SCHEME {
 impl SCHEME {
     pub fn init() -> Self {
         Self {
-            output: None,
             colors: None,
+            pigments: None,
             image: None,
             scheme: None,
             walldir: None,
@@ -81,8 +81,8 @@ impl SCHEME {
         }
     }
     pub fn modi(&mut self, new: &SCHEME) -> &Self {
-        if let Some(value) = new.output() { self.output = Some(value.clone()); }
         if let Some(value) = new.colors() { self.colors = Some(value.clone()); }
+        if let Some(value) = new.pigments() { self.pigments = Some(value.clone()); }
         if let Some(value) = new.image() { self.image = Some(value.clone()); }
         if let Some(value) = new.scheme() { self.scheme = Some(value.clone()); }
         if let Some(value) = new.walldir() { self.walldir = Some(value.clone()); }
