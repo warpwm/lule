@@ -5,11 +5,11 @@ use daemonize::Daemonize;
 use std::sync::mpsc::{channel, Sender};
 
 use crate::var;
-use crate::helper;
+use crate::fun::text;
 use crate::scheme::*;
 use crate::gen::write;
 use crate::fun::fifo;
-use crate::cli::create;
+use crate::gen::apply;
 
 pub fn run(app: &clap::ArgMatches, scheme: &mut SCHEME) -> Result<()> {
     let sub = app.subcommand_matches("daemon").unwrap();
@@ -25,10 +25,10 @@ pub fn run(app: &clap::ArgMatches, scheme: &mut SCHEME) -> Result<()> {
                 deamoned(scheme)?;
             }
             if arg ==  "next" {
-                helper::write_to_file(lule_pipe.clone(), "stop".as_bytes());
+                text::write_to_file(lule_pipe.clone(), "stop".as_bytes());
             }
             if arg ==  "stop" {
-                helper::write_to_file(lule_pipe.clone(), "stop".as_bytes());
+                text::write_to_file(lule_pipe.clone(), "stop".as_bytes());
             }
             if arg ==  "detach" {
                 let stdout = std::fs::File::create("/tmp/daemon.out").unwrap();
@@ -63,18 +63,19 @@ fn deamoned(scheme: &mut SCHEME) -> Result<()> {
     let timer = scheme.looop().unwrap().clone();
     thread::spawn(move || { time_to_sleep(timer, timetx ) });
 
-    create::new_palette(scheme)?;
+    apply::write_colors(scheme, false)?;
     loop {
         let jsonified = serde_json::to_value(&scheme).unwrap();
         println!("{}", serde_json::to_string_pretty(&jsonified).unwrap());
         'inner: loop {
             if let Ok(content) = piperx.try_recv() {
                 if let Ok(profile) = write::json_to_scheme(content.clone()) {
-                    set_colors(scheme, &mut profile.clone())?;
-                    create::old_palette(scheme)?;
+                    scheme.modi(&mut profile.clone());
+                    apply::write_colors(scheme, true)?;
                     break 'inner;
                 } else if content.trim() == "next" {
-                    create::new_palette(scheme)?;
+                    scheme.set_image(None);
+                    apply::write_colors(scheme, false)?;
                     break 'inner;
                 } else if content.trim() == "stop" {
                     std::process::exit(0);
@@ -84,20 +85,12 @@ fn deamoned(scheme: &mut SCHEME) -> Result<()> {
             };
             if timerx.try_recv().is_ok() { 
                 println!("time-looped");
-                create::new_palette(scheme)?;
+                apply::write_colors(scheme, false)?;
                 break 'inner 
             }
             thread::sleep(time::Duration::from_millis(10));
         }
     }
-}
-
-fn set_colors(scheme: &mut SCHEME, new_scheme: &mut SCHEME) -> Result<()> {
-    new_scheme.set_walldir(None);
-    new_scheme.set_image(None);
-    scheme.modi(new_scheme);
-    create::old_palette(scheme)?;
-    Ok(())
 }
 
 fn read_pipe(pipe_name: PathBuf, sender: Sender<String>) {

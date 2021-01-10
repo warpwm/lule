@@ -5,8 +5,8 @@ use crate::gen::palette;
 use crate::show::format;
 use crate::show::viuwer;
 use crate::scheme::*;
-use crate::helper::*;
-use crate::cli::create;
+use crate::fun::text;
+use crate::gen::apply;
 
 pub fn run(app: &clap::ArgMatches, scheme: &mut SCHEME) -> Result<()> {
     let sub = app.subcommand_matches("colors").unwrap();
@@ -15,7 +15,7 @@ pub fn run(app: &clap::ArgMatches, scheme: &mut SCHEME) -> Result<()> {
 
     scheme.set_scripts(None);
     if sub.is_present("gen") {
-        create::new_palette(scheme)?;
+        apply::write_colors(scheme, false)?;
     }
 
 
@@ -28,13 +28,13 @@ pub fn run(app: &clap::ArgMatches, scheme: &mut SCHEME) -> Result<()> {
 
         let mut wall_temp = PathBuf::from(&cachepath);
         wall_temp.push("wallpaper");
-        if let Ok(content) = file_to_string(wall_temp) {
+        if let Ok(content) = text::file_to_string(wall_temp) {
             scheme.set_image(Some(content));
         }
 
         let mut theme_temp = PathBuf::from(&cachepath);
         theme_temp.push("theme");
-        if let Ok(content) = file_to_string(theme_temp) {
+        if let Ok(content) = text::file_to_string(theme_temp) {
             scheme.set_theme(Some(content));
         }
     }

@@ -5,7 +5,7 @@ use crate::var;
 use crate::gen::palette;
 use crate::gen::generate;
 use crate::gen::templ;
-use crate::helper;
+use crate::fun::text;
 use crate::show::viuwer;
 use crate::show::format;
 
@@ -30,7 +30,7 @@ fn test_colors(app: &clap::ArgMatches, scheme: &mut SCHEME) -> Result<()> {
 
     let wallpaper = scheme.walldir().clone().unwrap();
     if scheme.image().is_none() {
-        scheme.set_image(Some(helper::random_image(&wallpaper)));
+        scheme.set_image(Some(text::random_image(&wallpaper)));
     }
 
     let palette = palette::palette_from_image(scheme.image().clone().unwrap());

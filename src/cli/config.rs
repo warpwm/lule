@@ -1,5 +1,5 @@
 use crate::scheme::*;
-use crate::helper;
+use crate::fun::text;
 use crate::var;
 use anyhow::Result;
 
@@ -15,7 +15,7 @@ pub fn run(app: &clap::ArgMatches, scheme: &mut SCHEME) -> Result<()> {
     } else {
         let mut pipe_name = std::env::temp_dir();
         pipe_name.push("lule_pipe");
-        helper::write_to_file(pipe_name, format_scheme.as_bytes());
+        text::write_to_file(pipe_name, format_scheme.as_bytes());
     }
     Ok(())
 }

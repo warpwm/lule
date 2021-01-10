@@ -4,7 +4,6 @@ mod var;
 mod gen;
 mod show;
 mod scheme;
-mod helper;
 
 extern crate file;
 extern crate serde;

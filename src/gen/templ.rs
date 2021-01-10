@@ -1,6 +1,6 @@
 use anyhow::Result;
 use std::path::PathBuf;
-use crate::helper;
+use crate::fun::text;
 use crate::scheme::*;
 use templar;
 use templar::*;
@@ -8,7 +8,7 @@ use templar::*;
 fn generate_template(original: PathBuf, replaced: PathBuf, scheme: &SCHEME) -> Result<()> {
 
     let mut content = String::new();
-    if let Ok(cont) = helper::file_to_string(original) {
+    if let Ok(cont) = text::file_to_string(original) {
         content = cont;
     }
 
@@ -40,7 +40,7 @@ fn generate_template(original: PathBuf, replaced: PathBuf, scheme: &SCHEME) -> R
     context.set(data)?;
 
     let new_content = format!("{}", template.render(&context)?);
-    helper::write_to_file(replaced, new_content.as_bytes());
+    text::write_to_file(replaced, new_content.as_bytes());
     Ok(())
 }
 

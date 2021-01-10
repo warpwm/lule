@@ -2,7 +2,7 @@ use colored::*;
 use std::path::PathBuf;
 
 use crate::gen::kmeans;
-use crate::helper::*;
+use crate::fun::text;
 
 pub fn palette_from_image(image: String) -> Vec<String> {
     let colors_lab = kmeans::pigments(&image, 16, Some(300))
@@ -28,7 +28,7 @@ pub fn palette_from_image(image: String) -> Vec<String> {
 
 pub fn colors_from_file(filename: PathBuf) -> Result<Vec<pastel::Color>, Box<dyn std::error::Error>> {
     let mut colors = Vec::new();
-    for line in lines_to_vec(filename) {
+    for line in text::lines_to_vec(filename) {
         colors.push(pastel::Color::from_hex(&line));
     }
     Ok(colors)

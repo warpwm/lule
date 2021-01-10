@@ -37,7 +37,7 @@ pub fn write_to_file(filename: PathBuf, content: &[u8]) {
         unwrap_or_else(|err| {
             eprintln!("{} {} {} {} {}",
                 "error:".red().bold(),
-                "Could not create temp file",
+                "Could not create file",
                 filename.as_os_str().to_str().unwrap().yellow(),
                 "->", err);
             std::process::exit(1);
