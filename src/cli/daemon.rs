@@ -71,7 +71,8 @@ fn deamoned(scheme: &mut SCHEME) -> Result<()> {
             if let Ok(content) = piperx.try_recv() {
                 if let Ok(profile) = write::json_to_scheme(content.clone()) {
                     scheme.modi(&mut profile.clone());
-                    apply::write_colors(scheme, true)?;
+                    println!("{}", scheme.theme().clone().unwrap());
+                    apply::write_colors(scheme, false)?;
                     break 'inner;
                 } else if content.trim() == "next" {
                     scheme.set_image(None);

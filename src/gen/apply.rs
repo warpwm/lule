@@ -23,8 +23,7 @@ pub fn write_colors(scheme: &mut SCHEME, old: bool) -> Result<()> {
                 scheme.set_theme(Some(content));
             }
         }
-    }
-    else {
+    } else {
         let wallpaper = scheme.walldir().clone().unwrap();
         if scheme.image().is_none() {
             scheme.set_image(Some(text::random_image(&wallpaper)));

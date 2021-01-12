@@ -52,9 +52,9 @@ pub fn run(app: &clap::ArgMatches, scheme: &mut SCHEME) -> Result<()> {
             if arg ==  "image" {
                 viuwer::display_image(&scheme, (cols).into(), (rows -1).into()).ok();
             } else if arg ==  "ansii" {
-                format::show_colors(&scheme, 0..255, 4);
+                format::show_colors(&scheme, 0..256, 4);
             } else if arg ==  "list" {
-                format::show_pastel_colors(&scheme, 0..255);
+                format::show_pastel_colors(&scheme, 0..256);
             } else if arg ==  "mix" {
                 viuwer::display_image(&scheme, (cols).into(), (rows -3).into()).ok();
                 println!("Wallpaper: {}, \t\t Colors: 1-16", scheme.image().clone().unwrap());

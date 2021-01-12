@@ -7,7 +7,7 @@ use std::ops::Range;
 pub fn show_colors(scheme: &SCHEME, colrange: Range::<usize>, padding: usize) {
     let colors = scheme.colors().clone().unwrap();
     for i in colrange {
-        let val = if !true { format!("  {:#03}  ", i) } else { format!("{}{}{}",
+        let val = if true { format!("  {:#03}  ", i) } else { format!("{}{}{}",
             " ".repeat(padding),
             colors[i].to_rgb_hex_string(true), 
             " ".repeat(padding))
