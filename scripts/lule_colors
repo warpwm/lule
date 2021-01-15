@@ -66,8 +66,13 @@ colors_to_nvim &
 #colors awesomewm
 awesome-client 'require("beautiful").init(require("awful").util.getdir("config") .. "theme.lua" )'
 
+source $HOME/.cache/wal/colors.sh
 
-bspc config focused_border_color $(cat $HOME/.cache/wal/colors | head -n 2 | tail -n 1) &
+bspc config focused_border_color $color1 &
+bspc config normal_border_color $color239 &
+bspc config active_border_color $color239 &
+
+
 python $HOME/.local/bin/pywalfox update &
 
 feh --no-fehbg --bg-scale $(cat $TMP/lule_wallpaper) &

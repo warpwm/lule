@@ -85,7 +85,7 @@ fn deamoned(scheme: &mut SCHEME) -> Result<()> {
                 }
             };
             if timerx.try_recv().is_ok() { 
-                println!("time-looped");
+                scheme.set_image(None);
                 apply::write_colors(scheme, false)?;
                 break 'inner 
             }
