@@ -1,7 +1,7 @@
 # cat $TMP/lule_colors > $HOME/.cache/wal/colors
-cp /run/user/1000/lule_colors $HOME/.cache/wal/colors
-cp /run/user/1000/lule_theme $HOME/.cache/wal/theme
-cp /run/user/1000/lule_wallpaper $HOME/.cache/wal/wallpaper
+cp $TEMP/lule_colors $HOME/.cache/wal/colors
+cp $TEMP/lule_theme $HOME/.cache/wal/theme
+cp $TEMP/lule_wallpaper $HOME/.cache/wal/wallpaper
 
 create_files(){
     ### === PRINTING THINGS TO FILES === ###

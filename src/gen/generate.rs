@@ -3,8 +3,8 @@ use crate::scheme::*;
 
 pub fn gen_main_six(col: &Vec<pastel::Color>) -> Vec<pastel::Color> {
     let mut colors = col.clone();
-    colors.retain(|x| x.to_lab().l > 30.0);
-    colors.retain(|x| x.to_lab().l < 95.0);
+    colors.retain(|x| x.to_lab().l > 40.0);
+    colors.retain(|x| x.to_lab().l < 80.0);
 
     colors.sort_by_key(|c| (c.to_lch().l) as i32);
     colors.reverse();
