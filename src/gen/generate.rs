@@ -3,11 +3,17 @@ use crate::scheme::*;
 
 pub fn gen_main_six(col: &Vec<pastel::Color>) -> Vec<pastel::Color> {
     let mut colors = col.clone();
-    colors.retain(|x| x.to_lab().l > 40.0);
+    colors.retain(|x| x.to_lab().l > 20.0);
     colors.retain(|x| x.to_lab().l < 80.0);
 
     colors.sort_by_key(|c| (c.to_lch().l) as i32);
     colors.reverse();
+
+    let mut i = 0;
+    while colors.len() < 6 {
+        colors.push(pastel::Color::complementary(&colors[i]));
+        i = i +1;
+    }
 
     let mut main_colors: Vec<pastel::Color> = Vec::new();
     for i in 0..6 {

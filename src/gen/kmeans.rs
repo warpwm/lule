@@ -1,6 +1,7 @@
 extern crate rand;
 extern crate image;
 
+use rayon::prelude::*;
 use rand::{distributions::WeightedIndex, prelude::*};
 use image::GenericImageView;
 
@@ -63,7 +64,7 @@ pub fn palette(pixels: &Vec<pastel::Lab>, k: u8, max_iter: Option<u16>) -> Vec<(
     for _ in 0..(k - 1) {
         // Calculate the (nearest_distance)^2 for every color in the image
         let distances: Vec<f64> = pixels
-            .iter()
+            .par_iter()
             .map(|color| (nearest(&color, &means).1).powi(2))
             .collect();
 

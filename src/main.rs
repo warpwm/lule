@@ -8,6 +8,7 @@ mod scheme;
 extern crate file;
 extern crate serde;
 extern crate serde_json;
+extern crate rayon;
 
 #[macro_use]
 extern crate serde_derive;
