@@ -1,23 +1,21 @@
-use anyhow::Result;
-use std::path::PathBuf;
-use crate::var;
-use crate::gen::palette;
-use crate::show::format;
-use crate::show::viuwer;
-use crate::scheme::*;
 use crate::fun::text;
 use crate::gen::apply;
+use crate::gen::palette;
+use crate::scheme::*;
+use crate::show::format;
+use crate::show::viuwer;
+use crate::var;
+use anyhow::Result;
+use std::path::PathBuf;
 
-pub fn run(app: &clap::ArgMatches, scheme: &mut SCHEME) -> Result<()> {
+pub fn run(app: &clap::ArgMatches, scheme: &mut Scheme) -> Result<()> {
     let sub = app.subcommand_matches("colors").unwrap();
     var::concatinate(app, scheme);
-
 
     scheme.set_scripts(None);
     if sub.is_present("gen") {
         apply::write_colors(scheme, false)?;
     }
-
 
     if let Some(cachepath) = scheme.cache().clone() {
         let mut color_temp = PathBuf::from(&cachepath);
@@ -39,8 +37,6 @@ pub fn run(app: &clap::ArgMatches, scheme: &mut SCHEME) -> Result<()> {
         }
     }
 
-
-
     let (cols, rows) = crossterm::terminal::size().ok().unwrap();
     if let Some(arg) = sub.value_of("action") {
         // let values = write::get_json(output);
@@ -48,15 +44,18 @@ pub fn run(app: &clap::ArgMatches, scheme: &mut SCHEME) -> Result<()> {
             for color in scheme.colors().clone().unwrap().iter() {
                 println!("{}", color.to_rgb_hex_string(true));
             }
-        } else if arg ==  "image" {
-            viuwer::display_image(scheme, (cols).into(), (rows -1).into()).ok();
-        } else if arg ==  "ansii" {
+        } else if arg == "image" {
+            viuwer::display_image(scheme, (cols).into(), (rows - 1).into()).ok();
+        } else if arg == "ansii" {
             format::show_colors(scheme, 0..256, 4);
-        } else if arg ==  "list" {
+        } else if arg == "list" {
             format::show_pastel_colors(scheme, 0..256);
-        } else if arg ==  "mix" {
-            viuwer::display_image(scheme, (cols).into(), (rows -3).into()).ok();
-            println!("Wallpaper: {}, \t\t Colors: 1-16", scheme.image().clone().unwrap());
+        } else if arg == "mix" {
+            viuwer::display_image(scheme, (cols).into(), (rows - 3).into()).ok();
+            println!(
+                "Wallpaper: {}, \t\t Colors: 1-16",
+                scheme.image().clone().unwrap()
+            );
             format::show_colors(scheme, 0..16, ((cols - 56) / 16).into());
         }
     }

@@ -6,7 +6,7 @@ use std::collections::HashMap as Map;
 
 #[derive(Serialize, Deserialize, Debug, Clone, CopyGetters, Getters, MutGetters, Setters)]
 #[getset(get = "pub", set = "pub", get_mut = "pub")]
-pub struct SCHEME {
+pub struct Scheme {
     #[serde(skip)]
     colors: Option<Vec<pastel::Color>>,
     image: Option<String>,
@@ -31,7 +31,7 @@ pub struct SCHEME {
     mixes: Option<Map<usize, String>>,
 }
 
-impl SCHEME {
+impl Scheme {
     pub fn init() -> Self {
         Self {
             colors: None,
@@ -52,38 +52,73 @@ impl SCHEME {
             hue: None,
             difference: None,
             blend: None,
-            mixes: None 
+            mixes: None,
         }
     }
-    pub fn modi(&mut self, new: &SCHEME) -> &Self {
-        if let Some(value) = new.colors() { self.colors = Some(value.clone()); }
-        if let Some(value) = new.pigments() { self.pigments = Some(value.clone()); }
-        if let Some(value) = new.image() { self.image = Some(value.clone()); }
-        if let Some(value) = new.scheme() { self.scheme = Some(value.clone()); }
-        if let Some(value) = new.walldir() { self.walldir = Some(value.clone()); }
-        if let Some(value) = new.config() { self.config = Some(value.clone()); }
-        if let Some(value) = new.cache() { self.cache = Some(value.clone()); }
-        if let Some(value) = new.scripts() { self.scripts = Some(value.clone()); }
-        if let Some(value) = new.patterns() { self.patterns = Some(value.clone()); }
-        if let Some(value) = new.theme() { self.theme = Some(value.clone()); }
-        if let Some(value) = new.palette() { self.palette = Some(value.clone()); }
-        if let Some(value) = new.sort() { self.sort = Some(value.clone()); }
-        if let Some(value) = new.saturation() { self.saturation = Some(*value); }
-        if let Some(value) = new.illumination() { self.illumination = Some(*value); }
-        if let Some(value) = new.hue() { self.hue = Some(*value); }
-        if let Some(value) = new.difference() { self.difference = Some(*value); }
-        if let Some(value) = new.blend() { self.blend = Some(*value); }
-        if let Some(value) = new.mixes() { self.mixes = Some(value.clone()); }
+    pub fn modi(&mut self, new: &Scheme) -> &Self {
+        if let Some(value) = new.colors() {
+            self.colors = Some(value.clone());
+        }
+        if let Some(value) = new.pigments() {
+            self.pigments = Some(value.clone());
+        }
+        if let Some(value) = new.image() {
+            self.image = Some(value.clone());
+        }
+        if let Some(value) = new.scheme() {
+            self.scheme = Some(value.clone());
+        }
+        if let Some(value) = new.walldir() {
+            self.walldir = Some(value.clone());
+        }
+        if let Some(value) = new.config() {
+            self.config = Some(value.clone());
+        }
+        if let Some(value) = new.cache() {
+            self.cache = Some(value.clone());
+        }
+        if let Some(value) = new.scripts() {
+            self.scripts = Some(value.clone());
+        }
+        if let Some(value) = new.patterns() {
+            self.patterns = Some(value.clone());
+        }
+        if let Some(value) = new.theme() {
+            self.theme = Some(value.clone());
+        }
+        if let Some(value) = new.palette() {
+            self.palette = Some(value.clone());
+        }
+        if let Some(value) = new.sort() {
+            self.sort = Some(value.clone());
+        }
+        if let Some(value) = new.saturation() {
+            self.saturation = Some(*value);
+        }
+        if let Some(value) = new.illumination() {
+            self.illumination = Some(*value);
+        }
+        if let Some(value) = new.hue() {
+            self.hue = Some(*value);
+        }
+        if let Some(value) = new.difference() {
+            self.difference = Some(*value);
+        }
+        if let Some(value) = new.blend() {
+            self.blend = Some(*value);
+        }
+        if let Some(value) = new.mixes() {
+            self.mixes = Some(value.clone());
+        }
         self
     }
 }
-
 
 #[derive(Serialize, Deserialize, Debug, Clone, CopyGetters, Getters, MutGetters, Setters)]
 pub struct Special {
     pub background: String,
     pub foreground: String,
-    pub cursor: String
+    pub cursor: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, CopyGetters, Getters, MutGetters, Setters)]

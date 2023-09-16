@@ -10,7 +10,7 @@ use crate::show::format;
 use crate::show::viuwer;
 use crate::var;
 
-pub fn run(app: &clap::ArgMatches, scheme: &mut SCHEME) -> Result<()> {
+pub fn run(app: &clap::ArgMatches, scheme: &mut Scheme) -> Result<()> {
     test_colors(app, scheme)?;
 
     templ::pattern_gneration(scheme)?;
@@ -18,7 +18,7 @@ pub fn run(app: &clap::ArgMatches, scheme: &mut SCHEME) -> Result<()> {
     Ok(())
 }
 
-fn test_colors(app: &clap::ArgMatches, scheme: &mut SCHEME) -> Result<()> {
+fn test_colors(app: &clap::ArgMatches, scheme: &mut Scheme) -> Result<()> {
     // let mut pipe_name = std::env::temp_dir();
     // pipe_name.push("lule_pipe");
 

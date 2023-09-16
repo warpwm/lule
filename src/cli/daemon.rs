@@ -1,38 +1,39 @@
 use anyhow::Result;
-use std::path::PathBuf;
-use std::{thread, time};
 use daemonize::Daemonize;
+use std::path::PathBuf;
 use std::sync::mpsc::{channel, Sender};
+use std::{thread, time};
 
-use crate::var;
-use crate::fun::text;
-use crate::scheme::*;
-use crate::gen::write;
 use crate::fun::fifo;
+use crate::fun::text;
 use crate::gen::apply;
+use crate::gen::write;
+use crate::scheme::*;
+use crate::var;
 
-pub fn run(app: &clap::ArgMatches, scheme: &mut SCHEME) -> Result<()> {
+pub fn run(app: &clap::ArgMatches, scheme: &mut Scheme) -> Result<()> {
     let sub = app.subcommand_matches("daemon").unwrap();
     var::concatinate(app, scheme);
-
 
     if atty::isnt(atty::Stream::Stdout) {
         println!("you cant pipe out form this deamon");
     } else if let Some(arg) = sub.value_of("action") {
-        let mut lule_pipe = std::env::temp_dir(); lule_pipe.push("lule_pipe");
-        if arg ==  "start" {
+        let mut lule_pipe = std::env::temp_dir();
+        lule_pipe.push("lule_pipe");
+        if arg == "start" {
             deamoned(scheme)?;
         }
-        if arg ==  "next" {
+        if arg == "next" {
             text::write_to_file(lule_pipe.clone(), "stop".as_bytes());
         }
-        if arg ==  "stop" {
+        if arg == "stop" {
             text::write_to_file(lule_pipe.clone(), "stop".as_bytes());
         }
-        if arg ==  "detach" {
+        if arg == "detach" {
             let stdout = std::fs::File::create("/tmp/daemon.out").unwrap();
             let stderr = std::fs::File::create("/tmp/daemon.err").unwrap();
-            let mut lule_pid = std::env::temp_dir(); lule_pid.push("lule.pid");
+            let mut lule_pid = std::env::temp_dir();
+            lule_pid.push("lule.pid");
             let lule = Daemonize::new()
                 .pid_file(lule_pid)
                 .chown_pid_file(true)
@@ -48,18 +49,20 @@ pub fn run(app: &clap::ArgMatches, scheme: &mut SCHEME) -> Result<()> {
         }
     }
     Ok(())
-
 }
 
-fn deamoned(scheme: &mut SCHEME) -> Result<()> {
-    let mut lule_pipe = std::env::temp_dir(); lule_pipe.push("lule_pipe");
+fn deamoned(scheme: &mut Scheme) -> Result<()> {
+    let mut lule_pipe = std::env::temp_dir();
+    lule_pipe.push("lule_pipe");
     std::fs::remove_file(lule_pipe.clone()).ok();
     let (pipetx, piperx) = channel::<String>();
-    thread::spawn(move|| { read_pipe(lule_pipe, pipetx); });
+    thread::spawn(move || {
+        read_pipe(lule_pipe, pipetx);
+    });
 
     let (timetx, timerx) = channel::<bool>();
     let timer = scheme.looop().unwrap();
-    thread::spawn(move || { time_to_sleep(timer, timetx ) });
+    thread::spawn(move || time_to_sleep(timer, timetx));
 
     apply::write_colors(scheme, false)?;
     loop {
@@ -68,7 +71,7 @@ fn deamoned(scheme: &mut SCHEME) -> Result<()> {
         'inner: loop {
             if let Ok(content) = piperx.try_recv() {
                 if let Ok(profile) = write::json_to_scheme(content.clone()) {
-                    scheme.modi(&mut profile.clone());
+                    scheme.modi(&profile.clone());
                     println!("{}", scheme.theme().clone().unwrap());
                     apply::write_colors(scheme, false)?;
                     break 'inner;
@@ -82,10 +85,10 @@ fn deamoned(scheme: &mut SCHEME) -> Result<()> {
                     println!("{} \n\n^^^ is not a valid json", content);
                 }
             };
-            if timerx.try_recv().is_ok() { 
+            if timerx.try_recv().is_ok() {
                 scheme.set_image(None);
                 apply::write_colors(scheme, false)?;
-                break 'inner 
+                break 'inner;
             }
             thread::sleep(time::Duration::from_millis(10));
         }
@@ -93,7 +96,7 @@ fn deamoned(scheme: &mut SCHEME) -> Result<()> {
 }
 
 fn read_pipe(pipe_name: PathBuf, sender: Sender<String>) {
-    loop{
+    loop {
         std::fs::remove_file(pipe_name.clone()).ok();
         let pipe = fifo::Pipe::new(pipe_name.clone());
         pipe.ensure_exists().unwrap();
@@ -103,9 +106,8 @@ fn read_pipe(pipe_name: PathBuf, sender: Sender<String>) {
     }
 }
 
-
-fn time_to_sleep(time: usize, sender: Sender<bool>)  {
-    loop{
+fn time_to_sleep(time: usize, sender: Sender<bool>) {
+    loop {
         for _ in 0..time {
             thread::sleep(time::Duration::from_secs(1));
         }

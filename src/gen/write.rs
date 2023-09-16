@@ -8,7 +8,7 @@ use std::path::PathBuf;
 
 use super::hex::Hex;
 
-pub fn write_temp(scheme: &SCHEME) {
+pub fn write_temp(scheme: &Scheme) {
     let mut record = Vec::new();
     if let Some(colors) = scheme.colors() {
         for color in colors.iter() {
@@ -27,7 +27,7 @@ pub fn write_temp(scheme: &SCHEME) {
     text::write_temp_file("lule_scheme", format_scheme.as_bytes());
 }
 
-pub fn write_cache(scheme: &SCHEME) {
+pub fn write_cache(scheme: &Scheme) {
     let cache_path = match scheme.cache() {
         Some(value) => value,
         None => "",
@@ -50,7 +50,7 @@ pub fn write_cache(scheme: &SCHEME) {
     text::copy_to(lule_palette, theme);
 }
 
-pub fn write_cache_json(scheme: &mut SCHEME, values: Value) {
+pub fn write_cache_json(scheme: &mut Scheme, values: Value) {
     let cache_path = match scheme.cache() {
         Some(value) => value,
         None => "",
@@ -60,7 +60,7 @@ pub fn write_cache_json(scheme: &mut SCHEME, values: Value) {
     text::write_to_file(cache_json, json_out.as_bytes());
 }
 
-pub fn output_to_json(scheme: &mut SCHEME, map: bool) -> Value {
+pub fn output_to_json(scheme: &mut Scheme, map: bool) -> Value {
     let mut color_map = Map::new();
     let mut color_vec = Vec::new();
     if let Some(colors) = scheme.colors() {
@@ -97,8 +97,8 @@ pub fn output_to_json(scheme: &mut SCHEME, map: bool) -> Value {
     }
 }
 
-pub fn json_to_scheme(data: String) -> Result<SCHEME> {
-    let scheme: SCHEME =
+pub fn json_to_scheme(data: String) -> Result<Scheme> {
+    let scheme: Scheme =
         serde_json::from_str(&data).context("something got fucked-up reaading json")?;
     Ok(scheme)
 }

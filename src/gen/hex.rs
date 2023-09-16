@@ -65,6 +65,7 @@ pub fn color_from_hex(hex_string: &str) -> Color {
     parse_hex(hex_string).unwrap().1
 }
 
+#[allow(unused)]
 pub fn color_to_rgb_hex_string(color: &Color, leading_hash: bool) -> String {
     let hex = Hex::from(color);
     format!("{}{}", if leading_hash { "#" } else { "" }, hex.val)

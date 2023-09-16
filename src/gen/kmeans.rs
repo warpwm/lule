@@ -1,11 +1,11 @@
-extern crate rand;
 extern crate image;
+extern crate rand;
 
-use rayon::prelude::*;
-use rand::{distributions::WeightedIndex, prelude::*};
 use image::GenericImageView;
+use rand::{distributions::WeightedIndex, prelude::*};
+use rayon::prelude::*;
 
-pub fn nearest(color: &pastel::Lab, colors: &Vec<pastel::Lab>) -> (usize, f64) {
+pub fn nearest(color: &pastel::Lab, colors: &[pastel::Lab]) -> (usize, f64) {
     return colors
         .iter()
         .map(|c| pastel::delta_e::cie76(color, c))
@@ -21,7 +21,10 @@ pub fn _cie94(color0: &pastel::Lab, color: &pastel::Lab) -> f64 {
     let xc2 = (color.a.powi(2) + color.b.powi(2)).sqrt();
     let xdl = color.l - color0.l;
     let mut xdc = xc2 - xc1;
-    let xde = ( (color0.l - color.l).powi(2) + (color0.a - color.a).powi(2) + (color0.b - color.b).powi(2) ).sqrt();
+    let xde = ((color0.l - color.l).powi(2)
+        + (color0.a - color.a).powi(2)
+        + (color0.b - color.b).powi(2))
+    .sqrt();
     let mut xdh = xde.powi(2) - xdl.powi(2) - xdc.powi(2);
     xdh = if xdh > 0.0 { xdh.sqrt() } else { 0.0 };
     let xsc = 1.0 + 0.045 * xc1;
@@ -29,11 +32,10 @@ pub fn _cie94(color0: &pastel::Lab, color: &pastel::Lab) -> f64 {
     xdc /= xsc;
     xdh /= xsh;
 
-    ( xdl.powi(2) + xdc.powi(2) + xdh.powi(2) ).sqrt()
+    (xdl.powi(2) + xdc.powi(2) + xdh.powi(2)).sqrt()
 }
 
-
-fn recalculate(colors: &Vec<&pastel::Lab>) -> pastel::Lab {
+fn recalculate(colors: &[&pastel::Lab]) -> pastel::Lab {
     let mut w_sum = 0.0;
     let (mut l, mut a, mut b) = (0.0, 0.0, 0.0);
     for col in colors.iter() {
@@ -44,10 +46,10 @@ fn recalculate(colors: &Vec<&pastel::Lab>) -> pastel::Lab {
     }
 
     pastel::Lab {
-        l: l/w_sum,
-        a: a/w_sum,
-        b: b/w_sum,
-        alpha: 1.0
+        l: l / w_sum,
+        a: a / w_sum,
+        b: b / w_sum,
+        alpha: 1.0,
     }
 }
 
@@ -73,7 +75,8 @@ pub fn palette(pixels: &Vec<pastel::Lab>, k: u8, max_iter: Option<u16>) -> Vec<(
             Ok(t) => t,
             Err(_) => {
                 // Calculate the dominance of each color
-                let mut palette: Vec<(pastel::Lab, f32)> = means.iter().map(|c| (c.clone(), 0.0)).collect();
+                let mut palette: Vec<(pastel::Lab, f32)> =
+                    means.iter().map(|c| (c.clone(), 0.0)).collect();
                 let len = pixels.len() as f32;
                 for color in pixels.iter() {
                     let near = nearest(color, &means).0;
@@ -103,7 +106,7 @@ pub fn palette(pixels: &Vec<pastel::Lab>, k: u8, max_iter: Option<u16>) -> Vec<(
             means[i] = new_mean;
         }
         iters_left -= 1;
-        if !changed || iters_left <= 0 {
+        if !changed || iters_left == 0 {
             break;
         }
     }
@@ -112,14 +115,15 @@ pub fn palette(pixels: &Vec<pastel::Lab>, k: u8, max_iter: Option<u16>) -> Vec<(
     return clusters
         .iter()
         .enumerate()
-        .map(|(i, cluster)| {
-            (means[i].clone(), cluster.len() as f32 / pixels.len() as f32)
-        }).collect();
+        .map(|(i, cluster)| (means[i].clone(), cluster.len() as f32 / pixels.len() as f32))
+        .collect();
 }
 
-
-
-pub fn pigments(image_path: &str, count: u8, iters: Option<u16>) -> Result<Vec<(pastel::Lab, f32)>, Box<dyn std::error::Error>> {
+pub fn pigments(
+    image_path: &str,
+    count: u8,
+    iters: Option<u16>,
+) -> Result<Vec<(pastel::Lab, f32)>, Box<dyn std::error::Error>> {
     let mut img;
     img = image::open(image_path)?;
     img = img.resize(512, 512, image::imageops::FilterType::CatmullRom);

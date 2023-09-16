@@ -1,24 +1,23 @@
-mod fun;
 mod cli;
-mod var;
+mod fun;
 mod gen;
-mod show;
 mod scheme;
+mod show;
+mod var;
 
 extern crate file;
+extern crate rayon;
 extern crate serde;
 extern crate serde_json;
-extern crate rayon;
 
 #[macro_use]
 extern crate serde_derive;
 
-use std::env;
 use scheme::*;
-
+use std::env;
 
 fn main() {
-    let mut scheme = SCHEME::init();
+    let mut scheme = Scheme::init();
 
     let show_logo = env::args().len() <= 1;
 
@@ -32,7 +31,8 @@ fn main() {
             "config" => cli::config::run(&app, &mut scheme),
             "daemon" => cli::daemon::run(&app, &mut scheme),
             "test" => cli::test::run(&app, &mut scheme),
-            _ => Ok(())
-        }.ok();
+            _ => Ok(()),
+        }
+        .ok();
     }
 }

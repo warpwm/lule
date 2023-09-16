@@ -3,8 +3,8 @@ use rand::prelude::*;
 
 use super::hex::color_from_hex;
 
-pub fn gen_main_six(col: &Vec<pastel::Color>) -> Vec<pastel::Color> {
-    let mut colors = col.clone();
+pub fn gen_main_six(col: &[pastel::Color]) -> Vec<pastel::Color> {
+    let mut colors = col.to_owned();
     colors.retain(|x| x.to_lab().l > 20.0);
     colors.retain(|x| x.to_lab().l < 80.0);
 
@@ -18,8 +18,8 @@ pub fn gen_main_six(col: &Vec<pastel::Color>) -> Vec<pastel::Color> {
     }
 
     let mut main_colors: Vec<pastel::Color> = Vec::new();
-    for i in 0..6 {
-        main_colors.push(colors[i].clone())
+    for color in colors.iter().take(6) {
+        main_colors.push(color.clone())
     }
 
     main_colors.sort_by_key(|c| (c.to_lch().c) as i32);
@@ -90,7 +90,7 @@ pub fn gen_shades(colors: Vec<&pastel::Color>, number: u8) -> Vec<pastel::Color>
 
     for (i, color) in colors.iter().enumerate() {
         let position = pastel::Fraction::from(i as f64 / (colors.len() as f64 - 1.0));
-        color_scale.add_stop(color.clone().clone(), position);
+        color_scale.add_stop((*color).clone(), position);
     }
 
     let mix = Box::new(
@@ -129,7 +129,7 @@ pub fn gen_gradients(
     gradients
 }
 
-pub fn get_all_colors(scheme: &mut SCHEME) -> Vec<pastel::Color> {
+pub fn get_all_colors(scheme: &mut Scheme) -> Vec<pastel::Color> {
     let theme = scheme.theme().as_ref().unwrap_or(&"dark".to_string()) != "light";
     let mut palette: Vec<pastel::Color> = Vec::new();
     if let Some(ref cols) = scheme.pigments() {

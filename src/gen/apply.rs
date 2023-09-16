@@ -1,24 +1,27 @@
-use std::path::PathBuf;
-use anyhow::Result;
+use crate::fun::text;
+use crate::gen::execute;
 use crate::gen::generate;
 use crate::gen::palette;
 use crate::gen::write;
-use crate::gen::execute;
 use crate::scheme::*;
-use crate::fun::text;
+use anyhow::Result;
+use std::path::PathBuf;
 
-pub fn write_colors(scheme: &mut SCHEME, old: bool) -> Result<()> {
+pub fn write_colors(scheme: &mut Scheme, old: bool) -> Result<()> {
     if old {
         if let Some(cachepath) = scheme.cache().clone() {
-            let mut palette_temp = PathBuf::from(&cachepath); palette_temp.push("palette");
+            let mut palette_temp = PathBuf::from(&cachepath);
+            palette_temp.push("palette");
             scheme.set_pigments(Some(text::lines_to_vec(palette_temp)));
 
-            let mut wall_temp = PathBuf::from(&cachepath); wall_temp.push("wallpaper");
+            let mut wall_temp = PathBuf::from(&cachepath);
+            wall_temp.push("wallpaper");
             if let Ok(content) = text::file_to_string(wall_temp) {
                 scheme.set_image(Some(content));
             }
 
-            let mut theme_temp = PathBuf::from(&cachepath); theme_temp.push("theme");
+            let mut theme_temp = PathBuf::from(&cachepath);
+            theme_temp.push("theme");
             if let Ok(content) = text::file_to_string(theme_temp) {
                 scheme.set_theme(Some(content));
             }
@@ -36,7 +39,7 @@ pub fn write_colors(scheme: &mut SCHEME, old: bool) -> Result<()> {
                     palette = palette::palette_from_image(scheme.image().clone().unwrap());
                     text::write_temp_file("lule_palette", palette.join("\n").as_bytes());
                     scheme.set_pigments(Some(palette));
-                },
+                }
                 _ => unreachable!(),
             };
         }
