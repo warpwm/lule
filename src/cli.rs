@@ -11,6 +11,8 @@ use clap::{
 pub fn build_cli<'a>(logo: &'a str) -> App<'static, 'a> {
     App::new(crate_name!())
         .version(crate_version!())
+        // NOTE: this doesn't seem right but can't make the flower not clipped otherwise
+        .set_term_width(1200)
         .before_help(logo)
         .about(crate_description!())
         // .after_help("Does really amazing things to great people...but be careful with -R")
