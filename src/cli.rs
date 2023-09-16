@@ -8,20 +8,10 @@ use clap::{
     crate_description, crate_name, crate_version, App, AppSettings, Arg, ArgSettings, SubCommand,
 };
 
-/////UNSAFE
-fn string_to_unsafe_static_str(s: String) -> &'static str {
-    Box::leak(s.into_boxed_str())
-}
-
-pub fn build_cli(show_logo: bool) -> App<'static, 'static> {
-    let logo: String = if show_logo {
-        std::fs::read_to_string("resources/logo.txt").unwrap()
-    } else {
-        String::new()
-    };
+pub fn build_cli<'a>(logo: &'a str) -> App<'static, 'a> {
     App::new(crate_name!())
         .version(crate_version!())
-        .before_help(string_to_unsafe_static_str(logo))
+        .before_help(logo)
         .about(crate_description!())
         // .after_help("Does really amazing things to great people...but be careful with -R")
         .global_setting(AppSettings::ColorAuto)

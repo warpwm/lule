@@ -20,8 +20,13 @@ fn main() {
     let mut scheme = Scheme::init();
 
     let show_logo = env::args().len() <= 1;
+    let logo = if show_logo {
+        std::fs::read_to_string("resources/logo.txt").unwrap_or(String::new())
+    } else {
+        String::new()
+    };
 
-    let app = cli::build_cli(show_logo).get_matches();
+    let app = cli::build_cli(logo.as_str()).get_matches();
     // var::concatinate(&app, &mut scheme);
 
     if let Some(subcommand) = app.subcommand_name() {
