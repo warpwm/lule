@@ -68,11 +68,11 @@ impl SCHEME {
         if let Some(value) = new.theme() { self.theme = Some(value.clone()); }
         if let Some(value) = new.palette() { self.palette = Some(value.clone()); }
         if let Some(value) = new.sort() { self.sort = Some(value.clone()); }
-        if let Some(value) = new.saturation() { self.saturation = Some(value.clone()); }
-        if let Some(value) = new.illumination() { self.illumination = Some(value.clone()); }
-        if let Some(value) = new.hue() { self.hue = Some(value.clone()); }
-        if let Some(value) = new.difference() { self.difference = Some(value.clone()); }
-        if let Some(value) = new.blend() { self.blend = Some(value.clone()); }
+        if let Some(value) = new.saturation() { self.saturation = Some(*value); }
+        if let Some(value) = new.illumination() { self.illumination = Some(*value); }
+        if let Some(value) = new.hue() { self.hue = Some(*value); }
+        if let Some(value) = new.difference() { self.difference = Some(*value); }
+        if let Some(value) = new.blend() { self.blend = Some(*value); }
         if let Some(value) = new.mixes() { self.mixes = Some(value.clone()); }
         self
     }

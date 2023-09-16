@@ -12,7 +12,7 @@ pub fn write_temp(scheme: &SCHEME) {
     let mut record = Vec::new();
     if let Some(colors) = scheme.colors() {
         for color in colors.iter() {
-            record.push(format!("{}", color.to_rgb_hex_string(true)));
+            record.push(color.to_rgb_hex_string(true).to_string());
         }
         text::write_temp_file("lule_colors", record.join("\n").as_bytes());
     }
@@ -22,7 +22,7 @@ pub fn write_temp(scheme: &SCHEME) {
     if let Some(theme) = scheme.theme() {
         text::write_temp_file("lule_theme", theme.as_bytes());
     }
-    let scheme_json = serde_json::to_value(&scheme).unwrap();
+    let scheme_json = serde_json::to_value(scheme).unwrap();
     let format_scheme = format!("{}", scheme_json);
     text::write_temp_file("lule_scheme", format_scheme.as_bytes());
 }
@@ -91,9 +91,9 @@ pub fn output_to_json(scheme: &mut SCHEME, map: bool) -> Value {
         colors: color_vec,
     };
     if map {
-        serde_json::to_value(&map_profile).unwrap()
+        serde_json::to_value(map_profile).unwrap()
     } else {
-        serde_json::to_value(&vec_profile).unwrap()
+        serde_json::to_value(vec_profile).unwrap()
     }
 }
 

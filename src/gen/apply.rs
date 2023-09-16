@@ -46,10 +46,10 @@ pub fn write_colors(scheme: &mut SCHEME, old: bool) -> Result<()> {
     scheme.set_colors(Some(allcolors));
 
     let values = write::output_to_json(scheme, false);
-    write::write_temp(&scheme);
-    write::write_cache(&scheme);
+    write::write_temp(scheme);
+    write::write_cache(scheme);
     write::write_cache_json(scheme, values);
-    if let Some(_) = scheme.scripts() {
+    if scheme.scripts().is_some() {
         execute::command_execution(scheme);
     }
     Ok(())

@@ -10,7 +10,7 @@ pub fn nearest(color: &pastel::Lab, colors: &Vec<pastel::Lab>) -> (usize, f64) {
         .iter()
         .map(|c| pastel::delta_e::cie76(color, c))
         .enumerate()
-        .min_by(|(_, a), (_, b)| a.partial_cmp(&b).expect("NaN encountered"))
+        .min_by(|(_, a), (_, b)| a.partial_cmp(b).expect("NaN encountered"))
         .unwrap();
 }
 
@@ -26,10 +26,10 @@ pub fn _cie94(color0: &pastel::Lab, color: &pastel::Lab) -> f64 {
     xdh = if xdh > 0.0 { xdh.sqrt() } else { 0.0 };
     let xsc = 1.0 + 0.045 * xc1;
     let xsh = 1.0 + 0.015 * xc1;
-    xdc = xdc / xsc;
-    xdh = xdh / xsh;
+    xdc /= xsc;
+    xdh /= xsh;
 
-    return ( xdl.powi(2) + xdc.powi(2) + xdh.powi(2) ).sqrt();
+    ( xdl.powi(2) + xdc.powi(2) + xdh.powi(2) ).sqrt()
 }
 
 
@@ -65,7 +65,7 @@ pub fn palette(pixels: &Vec<pastel::Lab>, k: u8, max_iter: Option<u16>) -> Vec<(
         // Calculate the (nearest_distance)^2 for every color in the image
         let distances: Vec<f64> = pixels
             .par_iter()
-            .map(|color| (nearest(&color, &means).1).powi(2))
+            .map(|color| (nearest(color, &means).1).powi(2))
             .collect();
 
         // Create a weighted distribution based on distance^2 -> if error, return the means
@@ -76,7 +76,7 @@ pub fn palette(pixels: &Vec<pastel::Lab>, k: u8, max_iter: Option<u16>) -> Vec<(
                 let mut palette: Vec<(pastel::Lab, f32)> = means.iter().map(|c| (c.clone(), 0.0)).collect();
                 let len = pixels.len() as f32;
                 for color in pixels.iter() {
-                    let near = nearest(&color, &means).0;
+                    let near = nearest(color, &means).0;
                     palette[near].1 += 1.0 / len;
                 }
                 return palette;
@@ -92,7 +92,7 @@ pub fn palette(pixels: &Vec<pastel::Lab>, k: u8, max_iter: Option<u16>) -> Vec<(
     loop {
         clusters = vec![Vec::new(); k as usize];
         for color in pixels.iter() {
-            clusters[nearest(&color, &means).0].push(color);
+            clusters[nearest(color, &means).0].push(color);
         }
         let mut changed: bool = false;
         for i in 0..clusters.len() {
@@ -131,5 +131,5 @@ pub fn pigments(image_path: &str, count: u8, iters: Option<u16>) -> Result<Vec<(
 
     let mut output = palette(&pixels, count, iters);
     output.sort_by(|(_, a), (_, b)| b.partial_cmp(a).unwrap());
-    return Ok(output);
+    Ok(output)
 }

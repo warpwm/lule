@@ -39,13 +39,13 @@ fn test_colors(app: &clap::ArgMatches, scheme: &mut SCHEME) -> Result<()> {
     scheme.set_colors(Some(allcolors));
 
     let (cols, rows) = crossterm::terminal::size().ok().unwrap();
-    viuwer::display_image(&scheme, (cols - 10).into(), (rows - 13).into()).ok();
+    viuwer::display_image(scheme, (cols - 10).into(), (rows - 13).into()).ok();
     println!("Palette");
     let colors: Vec<pastel::Color> = palette.into_iter().map(|x| color_from_hex(&x)).collect();
     format::show_specified_colors(colors.clone(), ((cols - 56) / 16).into());
     println!("\n6th");
     format::show_specified_colors(generate::gen_main_six(&colors), ((cols - 56) / 16).into());
     println!("\nColors");
-    format::show_colors(&scheme, 0..16, ((cols - 56) / 16).into());
+    format::show_colors(scheme, 0..16, ((cols - 56) / 16).into());
     Ok(())
 }

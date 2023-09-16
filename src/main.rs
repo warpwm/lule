@@ -20,7 +20,7 @@ use scheme::*;
 fn main() {
     let mut scheme = SCHEME::init();
 
-    let show_logo = if env::args().len() > 1 { false } else { true };
+    let show_logo = env::args().len() <= 1;
 
     let app = cli::build_cli(show_logo).get_matches();
     // var::concatinate(&app, &mut scheme);

@@ -125,7 +125,7 @@ impl Canvas {
 
 pub fn similar_colors(color: &Color) -> Vec<&NamedColor> {
     let mut colors: Vec<&NamedColor> = NAMED_COLORS.iter().collect();
-    colors.sort_by_key(|nc| (1000.0 * nc.color.distance_delta_e_ciede2000(&color)) as i32);
+    colors.sort_by_key(|nc| (1000.0 * nc.color.distance_delta_e_ciede2000(color)) as i32);
     colors.dedup_by(|n1, n2| n1.color == n2.color);
     colors
 }
@@ -161,7 +161,7 @@ pub fn show_color(handle: &mut dyn Write, mode: ansi::Mode, color: &Color, id: u
     );
 
     canvas.draw_text(
-        text_position_y + 0,
+        text_position_y,
         text_position_x,
         &format!("Color: {}", id),
     );
@@ -190,7 +190,7 @@ pub fn show_color(handle: &mut dyn Write, mode: ansi::Mode, color: &Color, id: u
     // );
 
 
-    let similar = similar_colors(&color);
+    let similar = similar_colors(color);
     for (i, nc) in similar.iter().enumerate().take(3) {
         canvas.draw_text(text_position_y + 10 + 2 * i, text_position_x + 7, nc.name);
         canvas.draw_rect(

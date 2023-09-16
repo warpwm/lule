@@ -5,7 +5,7 @@ pub mod pipe;
 pub mod args;
 pub mod file;
 
-use clap;
+
 use crate::scheme::*;
 use colored::*;
 
@@ -23,11 +23,10 @@ pub fn concatinate(app: &clap::ArgMatches, scheme: &mut SCHEME) {
     }
 
     if scheme.image().is_none() && scheme.walldir().is_none() {
-        eprintln!("{} {} {} {}", "error:".red().bold(), "Environment variable", "'$LULE_W'".yellow(), "is empty");
-        eprintln!("{} {} {} {}", "error:".red().bold(), "Argument option", "'--wallpath'".yellow(), "is not set");
-        eprintln!("{} {} {} {}", "error:".red().bold(), "Image argument", "'--image'".yellow(), "is not given");
-        eprintln!("\n{}\n\t{}\n\n{} {}", "USAGE".yellow(), "lule help <subcommands>...", 
-            "For more information try", "--help".blue() );
+        eprintln!("{} Environment variable {} is empty", "error:".red().bold(), "'$LULE_W'".yellow());
+        eprintln!("{} Argument option {} is not set", "error:".red().bold(), "'--wallpath'".yellow());
+        eprintln!("{} Image argument {} is not given", "error:".red().bold(), "'--image'".yellow());
+        eprintln!("\n{}\n\tlule help <subcommands>...\n\nFor more information try {}", "USAGE".yellow(), "--help".blue() );
         std::process::exit(1);
     }
 }

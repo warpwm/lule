@@ -9,9 +9,8 @@ use super::hex::color_from_hex;
 pub fn palette_from_image(image: String) -> Vec<String> {
     let colors_lab = kmeans::pigments(&image, 16, Some(300)).unwrap_or_else(|err| {
         eprintln!(
-            "{} {} {}",
+            "{} Problem creating palette -> {}",
             "error:".red().bold(),
-            "Problem creating palette ->",
             err
         );
         std::process::exit(1);
@@ -20,8 +19,8 @@ pub fn palette_from_image(image: String) -> Vec<String> {
     let mut colors = Vec::new();
     for (color, _) in colors_lab.iter() {
         let lab_color =
-            pastel::Color::from_lab(color.l.into(), color.a.into(), color.b.into(), 1.into());
-        colors.push(pastel::Color::from(lab_color.clone()).to_rgb_hex_string(true));
+            pastel::Color::from_lab(color.l, color.a, color.b, 1.into());
+        colors.push(lab_color.clone().to_rgb_hex_string(true));
     }
     colors
 }

@@ -48,18 +48,16 @@ pub fn run(app: &clap::ArgMatches, scheme: &mut SCHEME) -> Result<()> {
             for color in scheme.colors().clone().unwrap().iter() {
                 println!("{}", color.to_rgb_hex_string(true));
             }
-        } else {
-            if arg ==  "image" {
-                viuwer::display_image(&scheme, (cols).into(), (rows -1).into()).ok();
-            } else if arg ==  "ansii" {
-                format::show_colors(&scheme, 0..256, 4);
-            } else if arg ==  "list" {
-                format::show_pastel_colors(&scheme, 0..256);
-            } else if arg ==  "mix" {
-                viuwer::display_image(&scheme, (cols).into(), (rows -3).into()).ok();
-                println!("Wallpaper: {}, \t\t Colors: 1-16", scheme.image().clone().unwrap());
-                format::show_colors(&scheme, 0..16, ((cols - 56) / 16).into());
-            }
+        } else if arg ==  "image" {
+            viuwer::display_image(scheme, (cols).into(), (rows -1).into()).ok();
+        } else if arg ==  "ansii" {
+            format::show_colors(scheme, 0..256, 4);
+        } else if arg ==  "list" {
+            format::show_pastel_colors(scheme, 0..256);
+        } else if arg ==  "mix" {
+            viuwer::display_image(scheme, (cols).into(), (rows -3).into()).ok();
+            println!("Wallpaper: {}, \t\t Colors: 1-16", scheme.image().clone().unwrap());
+            format::show_colors(scheme, 0..16, ((cols - 56) / 16).into());
         }
     }
     Ok(())

@@ -14,10 +14,9 @@ pub fn vaid_image(path: &str) -> String {
     match image::open(path) {
         Ok(_) => path.to_owned(),
         Err(_) => {
-            eprintln!("{} {} {} {}",
-                "error:".red().bold(), "Path",
-                path.yellow(),
-                "is not a valid image file");
+            eprintln!("{} Path {} is not a valid image file",
+                "error:".red().bold(),
+                path.yellow());
             std::process::exit(1);
         }
     }
@@ -35,21 +34,17 @@ pub fn random_image(path: &str) -> String {
 pub fn write_to_file(filename: PathBuf, content: &[u8]) {
     let mut file_name = File::create(filename.clone()).
         unwrap_or_else(|err| {
-            eprintln!("{} {} {} {} {}",
+            eprintln!("{} Could not create file {} -> {}",
                 "error:".red().bold(),
-                "Could not create file",
-                filename.as_os_str().to_str().unwrap().yellow(),
-                "->", err);
+                filename.as_os_str().to_str().unwrap().yellow(), err);
             std::process::exit(1);
         });
 
     file_name.write(content).
         unwrap_or_else(|err| {
-            eprintln!("{} {} {} {} {}",
+            eprintln!("{} Could not write into {} -> {}",
                 "error:".red().bold(),
-                "Could not write into",
-                filename.as_os_str().to_str().unwrap().yellow(),
-                "->", err);
+                filename.as_os_str().to_str().unwrap().yellow(), err);
             std::process::exit(1);
         });
 }

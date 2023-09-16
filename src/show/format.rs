@@ -16,9 +16,9 @@ pub fn show_colors(scheme: &SCHEME, colrange: Range::<usize>, padding: usize) {
         if i == 16 || i == 232 { println!() };
         print!("{}",
             val.on_truecolor(
-                colors[i].to_rgba().r.into(),
-                colors[i].to_rgba().g.into(), 
-                colors[i].to_rgba().b.into()
+                colors[i].to_rgba().r,
+                colors[i].to_rgba().g, 
+                colors[i].to_rgba().b
             ).color( if colors[i].to_lab().l < 30.0 { "white" } else { "black" } )
             );
     }
@@ -43,9 +43,9 @@ pub fn show_specified_colors(colors: Vec<pastel::Color>, padding: usize) {
         if (i % 12 == 4 && i > 16) || (i == 16 || i == 8) { println!() };
         print!("{}",
             val.on_truecolor(
-                colors[i].to_rgba().r.into(),
-                colors[i].to_rgba().g.into(), 
-                colors[i].to_rgba().b.into()
+                colors[i].to_rgba().r,
+                colors[i].to_rgba().g, 
+                colors[i].to_rgba().b
             ).color( if colors[i].to_lab().l < 30.0 { "white" } else { "black" } )
         );
     }

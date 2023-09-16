@@ -126,7 +126,7 @@ impl Writer {
     }
     /// Writes byte data to the pipe.
     pub fn write(&self, data: &[u8]) -> std::io::Result<()> {
-        let mut buffer = std::fs::File::create(&self.path.inner.to_str().unwrap())?;
+        let mut buffer = std::fs::File::create(self.path.inner.to_str().unwrap())?;
         buffer.write(data)?;
         Ok(())
     }
@@ -137,7 +137,7 @@ impl Writer {
     }
     /// Writes &str data to the pipe.
     pub fn string(&self, data: String) -> std::io::Result<()> {
-        let mut buffer = std::fs::File::create(&self.path.inner.to_str().unwrap())?;
+        let mut buffer = std::fs::File::create(self.path.inner.to_str().unwrap())?;
         buffer.write(data.as_bytes())?;
         Ok(())
     }

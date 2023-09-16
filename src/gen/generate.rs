@@ -14,7 +14,7 @@ pub fn gen_main_six(col: &Vec<pastel::Color>) -> Vec<pastel::Color> {
     let mut i = 0;
     while colors.len() < 6 {
         colors.push(pastel::Color::complementary(&colors[i]));
-        i = i + 1;
+        i += 1;
     }
 
     let mut main_colors: Vec<pastel::Color> = Vec::new();
@@ -35,8 +35,8 @@ pub fn get_black_white(
 ) -> (pastel::Color, pastel::Color) {
     let black = pastel::Color::from_rgb(0, 0, 0);
     let white = pastel::Color::from_rgb(255, 255, 255);
-    let dark = black.mix::<pastel::RGBA<f64>>(&ac, pastel::Fraction::from(black_mix));
-    let light = white.mix::<pastel::RGBA<f64>>(&ac, pastel::Fraction::from(white_mix));
+    let dark = black.mix::<pastel::RGBA<f64>>(ac, pastel::Fraction::from(black_mix));
+    let light = white.mix::<pastel::RGBA<f64>>(ac, pastel::Fraction::from(white_mix));
     if theme {
         (dark, light)
     } else {
@@ -47,8 +47,8 @@ pub fn get_black_white(
 pub fn get_two_grays(ac: &pastel::Color, mix: f64, theme: bool) -> (pastel::Color, pastel::Color) {
     let darker = pastel::Color::from_rgb(100, 100, 100);
     let lighter = pastel::Color::from_rgb(170, 170, 170);
-    let dark = darker.mix::<pastel::RGBA<f64>>(&ac, pastel::Fraction::from(mix));
-    let light = lighter.mix::<pastel::RGBA<f64>>(&ac, pastel::Fraction::from(mix));
+    let dark = darker.mix::<pastel::RGBA<f64>>(ac, pastel::Fraction::from(mix));
+    let light = lighter.mix::<pastel::RGBA<f64>>(ac, pastel::Fraction::from(mix));
     if theme {
         (dark, light)
     } else {
@@ -130,11 +130,7 @@ pub fn gen_gradients(
 }
 
 pub fn get_all_colors(scheme: &mut SCHEME) -> Vec<pastel::Color> {
-    let theme = if scheme.theme().as_ref().unwrap_or(&"dark".to_string()) == "light" {
-        false
-    } else {
-        true
-    };
+    let theme = scheme.theme().as_ref().unwrap_or(&"dark".to_string()) != "light";
     let mut palette: Vec<pastel::Color> = Vec::new();
     if let Some(ref cols) = scheme.pigments() {
         for c in cols.iter() {

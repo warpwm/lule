@@ -6,13 +6,13 @@ fn external_command(script: &str){
                 .arg("-c")
                 .arg(script)
                 .output()
-                .expect("failed to execute process").stdout;
+                .expect("failed to execute process");
 }
 
 pub fn command_execution(scheme: &mut SCHEME) {
     if let Some(scripts) = scheme.scripts() {
         for s in scripts.iter() {
-            if std::fs::metadata(&s).is_ok() {
+            if std::fs::metadata(s).is_ok() {
                 external_command(s);
                 println!("running: {}", s)
             } else {

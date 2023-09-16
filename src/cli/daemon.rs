@@ -17,35 +17,33 @@ pub fn run(app: &clap::ArgMatches, scheme: &mut SCHEME) -> Result<()> {
 
 
     if atty::isnt(atty::Stream::Stdout) {
-        println!("{}", "you cant pipe out form this deamon");
-    } else {
-        if let Some(arg) = sub.value_of("action") {
-            let mut lule_pipe = std::env::temp_dir(); lule_pipe.push("lule_pipe");
-            if arg ==  "start" {
-                deamoned(scheme)?;
-            }
-            if arg ==  "next" {
-                text::write_to_file(lule_pipe.clone(), "stop".as_bytes());
-            }
-            if arg ==  "stop" {
-                text::write_to_file(lule_pipe.clone(), "stop".as_bytes());
-            }
-            if arg ==  "detach" {
-                let stdout = std::fs::File::create("/tmp/daemon.out").unwrap();
-                let stderr = std::fs::File::create("/tmp/daemon.err").unwrap();
-                let mut lule_pid = std::env::temp_dir(); lule_pid.push("lule.pid");
-                let lule = Daemonize::new()
-                    .pid_file(lule_pid)
-                    .chown_pid_file(true)
-                    .working_directory("/tmp")
-                    .user(1000)
-                    .group(1000)
-                    .stdout(stdout)
-                    .stderr(stderr);
-                match lule.start() {
-                    Ok(_) => deamoned(scheme)?,
-                    Err(e) => eprintln!("Error, {}", e),
-                }
+        println!("you cant pipe out form this deamon");
+    } else if let Some(arg) = sub.value_of("action") {
+        let mut lule_pipe = std::env::temp_dir(); lule_pipe.push("lule_pipe");
+        if arg ==  "start" {
+            deamoned(scheme)?;
+        }
+        if arg ==  "next" {
+            text::write_to_file(lule_pipe.clone(), "stop".as_bytes());
+        }
+        if arg ==  "stop" {
+            text::write_to_file(lule_pipe.clone(), "stop".as_bytes());
+        }
+        if arg ==  "detach" {
+            let stdout = std::fs::File::create("/tmp/daemon.out").unwrap();
+            let stderr = std::fs::File::create("/tmp/daemon.err").unwrap();
+            let mut lule_pid = std::env::temp_dir(); lule_pid.push("lule.pid");
+            let lule = Daemonize::new()
+                .pid_file(lule_pid)
+                .chown_pid_file(true)
+                .working_directory("/tmp")
+                .user(1000)
+                .group(1000)
+                .stdout(stdout)
+                .stderr(stderr);
+            match lule.start() {
+                Ok(_) => deamoned(scheme)?,
+                Err(e) => eprintln!("Error, {}", e),
             }
         }
     }
@@ -60,7 +58,7 @@ fn deamoned(scheme: &mut SCHEME) -> Result<()> {
     thread::spawn(move|| { read_pipe(lule_pipe, pipetx); });
 
     let (timetx, timerx) = channel::<bool>();
-    let timer = scheme.looop().unwrap().clone();
+    let timer = scheme.looop().unwrap();
     thread::spawn(move || { time_to_sleep(timer, timetx ) });
 
     apply::write_colors(scheme, false)?;

@@ -39,7 +39,7 @@ fn generate_template(original: PathBuf, replaced: PathBuf, scheme: &SCHEME) -> R
     let context = templar::StandardContext::new();
     context.set(data)?;
 
-    let new_content = format!("{}", template.render(&context)?);
+    let new_content = (template.render(&context)?).to_string();
     text::write_to_file(replaced, new_content.as_bytes());
     Ok(())
 }

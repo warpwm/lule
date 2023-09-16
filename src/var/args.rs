@@ -4,7 +4,7 @@ use crate::fun::text;
 
 pub fn concatinate(app: &clap::ArgMatches, scheme: &mut SCHEME) {
 
-    if let Some(_) = app.values_of("script") {
+    if app.values_of("script").is_some() {
         let vals: Vec<&str> = app.values_of("script").unwrap().collect();
         let mut scripts = Vec::new();
         if let Some(s) = scheme.scripts() {
@@ -16,7 +16,7 @@ pub fn concatinate(app: &clap::ArgMatches, scheme: &mut SCHEME) {
         scheme.set_scripts(Some(scripts));
     }
 
-    if let Some(_) = app.values_of("pattern") {
+    if app.values_of("pattern").is_some() {
         let vals: Vec<&str> = app.values_of("pattern").unwrap().collect();
         let mut patterns = Vec::new();
         for val in vals {
