@@ -18,8 +18,7 @@ pub fn palette_from_image(image: String) -> Vec<String> {
 
     let mut colors = Vec::new();
     for (color, _) in colors_lab.iter() {
-        let lab_color =
-            pastel::Color::from_lab(color.l, color.a, color.b, 1.into());
+        let lab_color = pastel::Color::from_lab(color.l, color.a, color.b, 1.into());
         colors.push(lab_color.clone().to_rgb_hex_string(true));
     }
     colors

@@ -95,7 +95,6 @@ impl Canvas {
             writeln!(out)?;
         }
         Ok(())
-
     }
 
     fn pixel(&self, i: usize, j: usize) -> &Option<Color> {
@@ -130,7 +129,12 @@ pub fn similar_colors(color: &Color) -> Vec<&NamedColor> {
     colors
 }
 
-pub fn show_color(handle: &mut dyn Write, mode: ansi::Mode, color: &Color, id: usize) -> Result<(), Box<dyn std::error::Error>> {
+pub fn show_color(
+    handle: &mut dyn Write,
+    mode: ansi::Mode,
+    color: &Color,
+    id: usize,
+) -> Result<(), Box<dyn std::error::Error>> {
     let checkerboard_size: usize = 16;
     let color_panel_size: usize = 12;
 
@@ -160,11 +164,7 @@ pub fn show_color(handle: &mut dyn Write, mode: ansi::Mode, color: &Color, id: u
         color,
     );
 
-    canvas.draw_text(
-        text_position_y,
-        text_position_x,
-        &format!("Color: {}", id),
-    );
+    canvas.draw_text(text_position_y, text_position_x, &format!("Color: {}", id));
 
     #[allow(clippy::identity_op)]
     canvas.draw_text(
@@ -188,7 +188,6 @@ pub fn show_color(handle: &mut dyn Write, mode: ansi::Mode, color: &Color, id: u
     //     text_position_x,
     //     "Most similar:",
     // );
-
 
     let similar = similar_colors(color);
     for (i, nc) in similar.iter().enumerate().take(3) {
