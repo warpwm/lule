@@ -215,7 +215,7 @@ pub fn get_all_colors(scheme: &mut Scheme) -> Vec<pastel::Color> {
     }
 
     let are_random = scheme.norandom().unwrap_or(false);
-
+ 
     if are_random {
         for _ in 0..6 {
             let rng: &mut dyn RngCore = &mut thread_rng();

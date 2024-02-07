@@ -13,7 +13,7 @@ use crate::var;
 pub fn run(app: &clap::ArgMatches, scheme: &mut Scheme) -> Result<()> {
     test_colors(app, scheme)?;
 
-    templ::pattern_gneration(scheme)?;
+    templ::pattern_generation(scheme)?;
 
     Ok(())
 }
