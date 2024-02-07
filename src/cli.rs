@@ -36,7 +36,7 @@ pub fn build_cli<'a>(logo: &'a str) -> App<'static, 'a> {
         )
         .arg(
             Arg::with_name("cache")
-                .long("cache")
+                .long("cache") 
                 .value_name("PATH")
                 .help("specify a dir where to dump color caches")
                 .takes_value(true)

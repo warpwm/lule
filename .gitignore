@@ -2,3 +2,4 @@
 .direnv
 vendor
 Cargo.lock
+devbox.lock
