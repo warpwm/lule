@@ -20,14 +20,13 @@ lule create -- set
 ## Features
 
 In order for lule to work properly, you need to set the following environment variables:
-- `LULE_W` : The path to the wallpaper
+- `LULE_W` : The path to the wallpaper (one random image will be selected from this directory)
 - `LULE_S` : The path to the script that will be run after the colors are generated
 (please check the 'scripts/apply_colors.sh' file for an example)
 
 ```
 export LULE_W="~/.wallpaper"
 export LULE_S="~/.func/lule_colors.sh"
-export LULE_C="/home/bresilla/.config/lule/configs.json"
 
 lule create -- set
 ```

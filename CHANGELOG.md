@@ -1,20 +1,22 @@
-## 0.1.0 - 2020-02-02
+# Changelog
 
-### Added
-- Initial commit with source files
-- Contributors' name [AUTHORS.md]
-- Chronological changes [CHANGELOG.md]
-- Readme file with documentation [README.md]
-- Licence file [LICENCE.md]
-- Contributing guide [CONTRIBUTING.md]
+## [0.2.0] - 2024-02-07
 
-[AUTHORS.md]: AUTHORS.md
-[CHANGELOG.md]: CHANGELOG.md
-[CONTRIBUTING.md]: CONTRIBUTING.md
-[LICENCE.md]: LICENCE.md
-[README.md]: README.md
-[Keep a Changelog]: http://keepachangelog.com
-[Semantic Versioning]: http://semver.org/
+### <!-- 3 -->📚 Documentation
 
-[unreleased]: https://github.com/${USER}/${REPO}/compare/0.1.0...HEAD
-[0.1.1]: https://github.com/${USER}/${REPO}/compare/0.1.0...0.1.1
+- Update README.md with required environment variables and example code
+
+### <!-- 7 -->⚙️ Miscellaneous Tasks
+
+- Refactor color generation and file organization
+- Configure changelog generation, devbox setup, and aliases
+
+### ADD
+
+- Added ryon for paralell processing
+
+### IMPORTANT
+
+- Removed WRITE struct
+
+<!-- WARP -->
