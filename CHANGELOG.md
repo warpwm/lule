@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.2.4] - 2024-02-07
+
+### <!-- 0 -->⛰️  Features
+
+- Refactor color generation and scheme in gen/generate.rs
+
 ## [0.2.0] - 2024-02-07
 
 ### <!-- 3 -->📚 Documentation
