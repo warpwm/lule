@@ -29,6 +29,7 @@ pub struct Scheme {
     difference: Option<f32>,
     blend: Option<f32>,
     mixes: Option<Map<usize, String>>,
+    norandom: Option<bool>,
 }
 
 impl Scheme {
@@ -53,6 +54,7 @@ impl Scheme {
             difference: None,
             blend: None,
             mixes: None,
+            norandom: None,
         }
     }
     pub fn modi(&mut self, new: &Scheme) -> &Self {
@@ -109,6 +111,9 @@ impl Scheme {
         }
         if let Some(value) = new.mixes() {
             self.mixes = Some(value.clone());
+        }
+        if let Some(value) = new.norandom() {
+            self.norandom = Some(*value);
         }
         self
     }

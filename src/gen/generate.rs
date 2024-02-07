@@ -213,33 +213,53 @@ pub fn get_all_colors(scheme: &mut Scheme) -> Vec<pastel::Color> {
             12,
         ));
     }
-    let lightish = gradients[2].clone();
-    let darkish = gradients[21].clone();
 
-    colors.extend(gen_shades(
-        vec![
-            &lightish,
-            &pastel::Color::from_rgb(255, 0, 0),
-            &darkish,
-        ],
-        24,
-    ));
-    colors.extend(gen_shades(
-        vec![
-            &lightish,
-            &pastel::Color::from_rgb(0, 255, 0),
-            &darkish,
-        ],
-        24,
-    ));
-    colors.extend(gen_shades(
-        vec![
-            &lightish,
-            &pastel::Color::from_rgb(0, 0, 255),
-            &darkish,
-        ],
-        24,
-    ));
+    let are_random = scheme.norandom().unwrap_or(false);
+
+    if are_random {
+        for _ in 0..6 {
+            let rng: &mut dyn RngCore = &mut thread_rng();
+            let hue = rng.gen::<f64>() * 360.0;
+            let saturation = 0.2 + 0.6 * rng.gen::<f64>();
+            let lightness = 0.3 + 0.4 * rng.gen::<f64>();
+            colors.extend(gen_shades(
+                vec![
+                    &col0,
+                    &pastel::Color::from_hsl(hue, saturation, lightness),
+                    &col15,
+                ],
+                12,
+            ));
+        }
+    } else {
+        let lightish = gradients[2].clone();
+        let darkish = gradients[21].clone();
+        
+        colors.extend(gen_shades(
+            vec![
+                &lightish,
+                &pastel::Color::from_rgb(255, 0, 0),
+                &darkish,
+                ],
+                24,
+            ));
+        colors.extend(gen_shades(
+            vec![
+                &lightish,
+                &pastel::Color::from_rgb(0, 255, 0),
+                &darkish,
+                ],
+                24,
+            ));
+        colors.extend(gen_shades(
+            vec![
+                &lightish,
+                &pastel::Color::from_rgb(0, 0, 255),
+                &darkish,
+                ],
+                24,
+            ));
+    }
 
 
     // Adding the generated gradients to the final color vector
