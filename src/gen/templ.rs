@@ -1,42 +1,39 @@
 use crate::fun::text;
 use crate::scheme::*;
 use anyhow::Result;
-use std::collections::BTreeMap;
 use std::path::PathBuf;
-use handlebars::Handlebars;
+use tera::{Context, Tera};
 
 fn generate_template(original: PathBuf, replaced: PathBuf, scheme: &Scheme) -> Result<()> {
-
     let mut content = String::new();
     if let Ok(cont) = text::file_to_string(original) {
         content = cont;
     }
 
-    let mut handlebars = Handlebars::new();
-    handlebars.register_template_string("template", &content)?;
+    let mut tera = Tera::default();
+    tera.add_raw_template("template", &content)?;
 
-    let mut data = BTreeMap::new();
+    let mut context = Context::new();
 
     if let Some(colors) = scheme.colors() {
         for (i, color) in colors.iter().enumerate() {
             let name = format!("color{}", i);
-            data.insert(name, color.to_rgb_hex_string(false));
+            context.insert(name, &color.to_rgb_hex_string(false));
         }
-        data.insert("background".to_string(), colors[0].to_rgb_hex_string(false));
-        data.insert("foreground".to_string(), colors[15].to_rgb_hex_string(false));
-        data.insert("cursor".to_string(), colors[1].to_rgb_hex_string(false));
-        data.insert("accent".to_string(), colors[1].to_rgb_hex_string(false));
+        context.insert("background", &colors[0].to_rgb_hex_string(false));
+        context.insert("foreground", &colors[15].to_rgb_hex_string(false));
+        context.insert("cursor", &colors[1].to_rgb_hex_string(false));
+        context.insert("accent", &colors[1].to_rgb_hex_string(false));
     }
 
     if let Some(wallpaper) = scheme.image() {
-        data.insert("wallpaper".to_string(), wallpaper.clone());
+        context.insert("wallpaper", &wallpaper);
     }
     if let Some(theme) = scheme.theme() {
-        data.insert("theme".to_string(), theme.clone());
+        context.insert("theme", &theme);
     }
 
-    let new_content = handlebars.render("template", &data)?;
-    
+    let new_content = tera.render("template", &context)?;
     text::write_to_file(replaced, new_content.as_bytes());
 
     Ok(())
@@ -49,7 +46,7 @@ pub fn pattern_generation(scheme: &mut Scheme) -> Result<()> {
                 generate_template(PathBuf::from(&p.0), PathBuf::from(&p.1), scheme)?;
                 println!("generating :{} into: {}", p.0, p.1)
             } else {
-                //TODO: better error handle
+                // TODO: better error handle
                 println!("{} or {} is not a valid file", p.0, p.1)
             }
         }
