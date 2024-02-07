@@ -199,7 +199,7 @@ pub fn get_all_colors(scheme: &mut Scheme) -> Vec<pastel::Color> {
     colors.push(col15.clone());
 
     // Adding randomly generated colors to the mix
-    for _ in 0..15 {
+    for _ in 0..12 {
         let rng: &mut dyn RngCore = &mut thread_rng();
         let hue = rng.gen::<f64>() * 360.0;
         let saturation = 0.2 + 0.6 * rng.gen::<f64>();
@@ -213,8 +213,8 @@ pub fn get_all_colors(scheme: &mut Scheme) -> Vec<pastel::Color> {
             12,
         ));
     }
-    let lightish = gradients[3].clone();
-    let darkish = gradients[22].clone();
+    let lightish = gradients[2].clone();
+    let darkish = gradients[21].clone();
 
     colors.extend(gen_shades(
         vec![
@@ -222,7 +222,7 @@ pub fn get_all_colors(scheme: &mut Scheme) -> Vec<pastel::Color> {
             &pastel::Color::from_rgb(255, 0, 0),
             &darkish,
         ],
-        12,
+        24,
     ));
     colors.extend(gen_shades(
         vec![
@@ -230,7 +230,7 @@ pub fn get_all_colors(scheme: &mut Scheme) -> Vec<pastel::Color> {
             &pastel::Color::from_rgb(0, 255, 0),
             &darkish,
         ],
-        12,
+        24,
     ));
     colors.extend(gen_shades(
         vec![
@@ -238,7 +238,7 @@ pub fn get_all_colors(scheme: &mut Scheme) -> Vec<pastel::Color> {
             &pastel::Color::from_rgb(0, 0, 255),
             &darkish,
         ],
-        12,
+        24,
     ));
 
 
