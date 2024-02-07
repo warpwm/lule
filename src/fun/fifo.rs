@@ -1,14 +1,16 @@
 #![allow(dead_code)]
 #![allow(unused_must_use)]
 
-
-use std::path::{PathBuf, Path};
 use nix::sys::stat::Mode;
 use std::io::prelude::*;
+use std::path::{Path, PathBuf};
 
 /// Attempt to create a new Unix named pipe/FIFO on disk.
 fn create_pipe<P: ?Sized + nix::NixPath>(path: &P, mode: Option<Mode>) -> nix::Result<()> {
-    nix::unistd::mkfifo(path, mode.unwrap_or_else(|| Mode::from_bits_truncate(0o660)))
+    nix::unistd::mkfifo(
+        path,
+        mode.unwrap_or_else(|| Mode::from_bits_truncate(0o660)),
+    )
 }
 
 /// Attempt to delete a Unix named pipe/FIFO from disk.
@@ -126,8 +128,8 @@ impl Writer {
     }
     /// Writes byte data to the pipe.
     pub fn write(&self, data: &[u8]) -> std::io::Result<()> {
-        let mut buffer = std::fs::File::create(&self.path.inner.to_str().unwrap())?;
-        buffer.write(data)?;
+        let mut buffer = std::fs::File::create(self.path.inner.to_str().unwrap())?;
+        buffer.write_all(data)?;
         Ok(())
     }
     /// Writes byte data to the pipe.
@@ -137,8 +139,8 @@ impl Writer {
     }
     /// Writes &str data to the pipe.
     pub fn string(&self, data: String) -> std::io::Result<()> {
-        let mut buffer = std::fs::File::create(&self.path.inner.to_str().unwrap())?;
-        buffer.write(data.as_bytes())?;
+        let mut buffer = std::fs::File::create(self.path.inner.to_str().unwrap())?;
+        buffer.write_all(data.as_bytes())?;
         Ok(())
     }
     /// Writes &str data to the pipe.

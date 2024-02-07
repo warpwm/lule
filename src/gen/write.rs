@@ -1,16 +1,18 @@
-use anyhow::{Result, Context};
+use crate::fun::text;
+use crate::scheme::*;
+use anyhow::{Context, Result};
 use serde_json::Value;
 use std::collections::HashMap as Map;
-use std::path::PathBuf;
 use std::env;
-use crate::scheme::*;
-use crate::fun::text;
+use std::path::PathBuf;
 
-pub fn write_temp(scheme: &SCHEME) {
+use super::hex::Hex;
+
+pub fn write_temp(scheme: &Scheme) {
     let mut record = Vec::new();
     if let Some(colors) = scheme.colors() {
         for color in colors.iter() {
-            record.push(format!("{}", color.to_rgb_hex_string(true)));
+            record.push(color.to_rgb_hex_string(true).to_string());
         }
         text::write_temp_file("lule_colors", record.join("\n").as_bytes());
     }
@@ -20,15 +22,15 @@ pub fn write_temp(scheme: &SCHEME) {
     if let Some(theme) = scheme.theme() {
         text::write_temp_file("lule_theme", theme.as_bytes());
     }
-    let scheme_json = serde_json::to_value(&scheme).unwrap();
+    let scheme_json = serde_json::to_value(scheme).unwrap();
     let format_scheme = format!("{}", scheme_json);
     text::write_temp_file("lule_scheme", format_scheme.as_bytes());
 }
 
-pub fn write_cache(scheme: &SCHEME) {
+pub fn write_cache(scheme: &Scheme) {
     let cache_path = match scheme.cache() {
         Some(value) => value,
-        None => ""
+        None => "",
     };
 
     let lule_colors = text::pather(vec!["lule_colors"], env::temp_dir());
@@ -48,23 +50,23 @@ pub fn write_cache(scheme: &SCHEME) {
     text::copy_to(lule_palette, theme);
 }
 
-pub fn write_cache_json(scheme: &mut SCHEME, values: Value) {
+pub fn write_cache_json(scheme: &mut Scheme, values: Value) {
     let cache_path = match scheme.cache() {
         Some(value) => value,
-        None => ""
+        None => "",
     };
     let cache_json = text::pather(vec!["colors.json"], PathBuf::from(cache_path));
     let json_out = serde_json::to_string_pretty(&values).unwrap();
     text::write_to_file(cache_json, json_out.as_bytes());
 }
 
-pub fn output_to_json(scheme: &mut SCHEME, map: bool) -> Value {
+pub fn output_to_json(scheme: &mut Scheme, map: bool) -> Value {
     let mut color_map = Map::new();
     let mut color_vec = Vec::new();
     if let Some(colors) = scheme.colors() {
         for (key, color) in colors.iter().enumerate() {
             let name = "color".to_string() + &key.to_string();
-            color_map.insert(name, pastel::HEX::from(color).to_string());
+            color_map.insert(name, Hex::from(color).to_string());
             color_vec.push(color.to_rgb_hex_string(true));
         }
     }
@@ -74,9 +76,9 @@ pub fn output_to_json(scheme: &mut SCHEME, map: bool) -> Value {
         special: Special {
             background: color_vec[0].clone(),
             foreground: color_vec[15].clone(),
-            cursor: color_vec[1].clone()
+            cursor: color_vec[1].clone(),
         },
-        colors: color_map
+        colors: color_map,
     };
     let vec_profile = ProfileVec {
         wallpaper: scheme.image().clone().unwrap(),
@@ -84,18 +86,19 @@ pub fn output_to_json(scheme: &mut SCHEME, map: bool) -> Value {
         special: Special {
             background: color_vec[0].clone(),
             foreground: color_vec[15].clone(),
-            cursor: color_vec[1].clone()
+            cursor: color_vec[1].clone(),
         },
-        colors: color_vec
+        colors: color_vec,
     };
     if map {
-        serde_json::to_value(&map_profile).unwrap()
+        serde_json::to_value(map_profile).unwrap()
     } else {
-        serde_json::to_value(&vec_profile).unwrap()
+        serde_json::to_value(vec_profile).unwrap()
     }
 }
 
-pub fn json_to_scheme(data: String) -> Result<SCHEME> {
-    let scheme: SCHEME = serde_json::from_str(&data).context("something got fucked-up reaading json")?;
+pub fn json_to_scheme(data: String) -> Result<Scheme> {
+    let scheme: Scheme =
+        serde_json::from_str(&data).context("something got fucked-up reaading json")?;
     Ok(scheme)
 }

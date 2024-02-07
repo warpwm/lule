@@ -1,12 +1,11 @@
-use crate::scheme::*;
 use crate::fun::text;
+use crate::scheme::*;
 use crate::var;
 use anyhow::Result;
 
-pub fn run(app: &clap::ArgMatches, scheme: &mut SCHEME) -> Result<()> {
+pub fn run(app: &clap::ArgMatches, scheme: &mut Scheme) -> Result<()> {
     // let sub = app.subcommand_matches("config").unwrap();
     var::concatinate(app, scheme);
-
 
     let scheme_json = serde_json::to_value(&scheme).unwrap();
     let format_scheme = format!("{}", scheme_json);
@@ -19,4 +18,3 @@ pub fn run(app: &clap::ArgMatches, scheme: &mut SCHEME) -> Result<()> {
     }
     Ok(())
 }
-

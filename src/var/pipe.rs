@@ -1,9 +1,8 @@
 use crate::scheme::*;
-use std::io::{self, BufRead};
 use anyhow::{Context, Result};
+use std::io::{self, BufRead};
 
-pub fn concatinate(scheme: &mut SCHEME) {
-
+pub fn concatinate(scheme: &mut Scheme) {
     if atty::isnt(atty::Stream::Stdin) {
         if let Ok(input) = read_stdin() {
             if let Ok(sh) = make_scheme(input) {
@@ -22,7 +21,8 @@ fn read_stdin() -> Result<String> {
     Ok(input)
 }
 
-fn make_scheme(data: String) -> Result<SCHEME> {
-    let scheme: SCHEME = serde_json::from_str(&data).context("something got fucked-up reaading json")?;
+fn make_scheme(data: String) -> Result<Scheme> {
+    let scheme: Scheme =
+        serde_json::from_str(&data).context("something got fucked-up reaading json")?;
     Ok(scheme)
 }

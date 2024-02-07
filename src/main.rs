@@ -1,28 +1,32 @@
-mod fun;
 mod cli;
-mod var;
+mod fun;
 mod gen;
-mod show;
 mod scheme;
+mod show;
+mod var;
 
 extern crate file;
+extern crate rayon;
 extern crate serde;
 extern crate serde_json;
-extern crate rayon;
 
 #[macro_use]
 extern crate serde_derive;
 
-use std::env;
 use scheme::*;
-
+use std::env;
 
 fn main() {
-    let mut scheme = SCHEME::init();
+    let mut scheme = Scheme::init();
 
-    let show_logo = if env::args().len() > 1 { false } else { true };
+    let show_logo = env::args().len() <= 1;
+    let logo = if show_logo {
+        std::fs::read_to_string("resources/logo.txt").unwrap_or(String::new())
+    } else {
+        String::new()
+    };
 
-    let app = cli::build_cli(show_logo).get_matches();
+    let app = cli::build_cli(logo.as_str()).get_matches();
     // var::concatinate(&app, &mut scheme);
 
     if let Some(subcommand) = app.subcommand_name() {
@@ -32,7 +36,8 @@ fn main() {
             "config" => cli::config::run(&app, &mut scheme),
             "daemon" => cli::daemon::run(&app, &mut scheme),
             "test" => cli::test::run(&app, &mut scheme),
-            _ => Ok(())
-        }.ok();
+            _ => Ok(()),
+        }
+        .ok();
     }
 }

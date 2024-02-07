@@ -1,12 +1,11 @@
-use anyhow::Result;
-use std::path::PathBuf;
 use crate::fun::text;
 use crate::scheme::*;
+use anyhow::Result;
+use std::path::PathBuf;
 use templar;
 use templar::*;
 
-fn generate_template(original: PathBuf, replaced: PathBuf, scheme: &SCHEME) -> Result<()> {
-
+fn generate_template(original: PathBuf, replaced: PathBuf, scheme: &Scheme) -> Result<()> {
     let mut content = String::new();
     if let Ok(cont) = text::file_to_string(original) {
         content = cont;
@@ -39,13 +38,12 @@ fn generate_template(original: PathBuf, replaced: PathBuf, scheme: &SCHEME) -> R
     let context = templar::StandardContext::new();
     context.set(data)?;
 
-    let new_content = format!("{}", template.render(&context)?);
+    let new_content = (template.render(&context)?).to_string();
     text::write_to_file(replaced, new_content.as_bytes());
     Ok(())
 }
 
-pub fn pattern_gneration(scheme: &mut SCHEME) -> Result<()> {
-
+pub fn pattern_gneration(scheme: &mut Scheme) -> Result<()> {
     if let Some(patterns) = scheme.patterns() {
         for p in patterns.iter() {
             if std::fs::metadata(&p.0).is_ok() && std::fs::metadata(&p.1).is_ok() {
