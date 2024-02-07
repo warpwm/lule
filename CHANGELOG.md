@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.2.5] - 2024-02-07
+
+### <!-- 2 -->🚜 Refactor
+
+- Refactor color generation and gradient access
+
+### <!-- 7 -->⚙️ Miscellaneous Tasks
+
+- Refactor file structure for better organization
+
 ## [0.2.4] - 2024-02-07
 
 ### <!-- 0 -->⛰️  Features
