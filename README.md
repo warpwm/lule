@@ -22,7 +22,7 @@ lule create -- set
 In order for lule to work properly, you need to set the following environment variables:
 - `LULE_W` : The path to the wallpaper
 - `LULE_S` : The path to the script that will be run after the colors are generated
-(please check the `scripts/lule_colors.sh` file for an example)
+(please check the 'scripts/apply_colors.sh' file for an example)
 
 ```
 export LULE_W="~/.wallpaper"
