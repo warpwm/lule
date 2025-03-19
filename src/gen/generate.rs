@@ -1,7 +1,7 @@
 // Importing necessary crates and modules
+use super::hex::color_from_hex;
 use crate::scheme::*;
 use rand::prelude::*;
-use super::hex::color_from_hex;
 
 // Helper function to generate the main six colors based on provided colors
 pub fn gen_main_six(col: &[pastel::Color]) -> Vec<pastel::Color> {
@@ -151,6 +151,35 @@ pub fn gen_gradients(
     gradients
 }
 
+pub fn gnerate_defined_colors(scheme: &mut Scheme) -> Vec<pastel::Color> {
+    let mut colors: Vec<pastel::Color> = Vec::new();
+    colors.push(pastel::Color::from_rgb(228, 228, 228));
+    colors.push(pastel::Color::from_rgb(148, 148, 148));
+    colors.push(pastel::Color::from_rgb(198, 198, 132));
+    colors.push(pastel::Color::from_rgb(227, 199, 138));
+    colors.push(pastel::Color::from_rgb(238, 239, 159));
+    colors.push(pastel::Color::from_rgb(222, 147, 95));
+    colors.push(pastel::Color::from_rgb(240, 143, 133));
+    colors.push(pastel::Color::from_rgb(225, 150, 162));
+    colors.push(pastel::Color::from_rgb(255, 203, 251));
+    colors.push(pastel::Color::from_rgb(133, 220, 130));
+    colors.push(pastel::Color::from_rgb(136, 196, 95));
+    colors.push(pastel::Color::from_rgb(54, 198, 146));
+    colors.push(pastel::Color::from_rgb(126, 218, 200));
+    colors.push(pastel::Color::from_rgb(128, 160, 255));
+    colors.push(pastel::Color::from_rgb(138, 175, 255));
+    colors.push(pastel::Color::from_rgb(116, 178, 255));
+    colors.push(pastel::Color::from_rgb(173, 205, 243));
+    colors.push(pastel::Color::from_rgb(174, 129, 255));
+    colors.push(pastel::Color::from_rgb(207, 135, 238));
+    colors.push(pastel::Color::from_rgb(230, 94, 114));
+    colors.push(pastel::Color::from_rgb(255, 81, 137));
+    colors.push(pastel::Color::from_rgb(255, 84, 84));
+    colors.push(pastel::Color::from_rgb(244, 175, 111));
+    colors.push(pastel::Color::from_rgb(205, 172, 252));
+    return colors;
+}
+
 // Function to get all colors based on the provided color scheme
 pub fn get_all_colors(scheme: &mut Scheme) -> Vec<pastel::Color> {
     // Checking the theme of the color scheme
@@ -198,8 +227,11 @@ pub fn get_all_colors(scheme: &mut Scheme) -> Vec<pastel::Color> {
     colors.extend(second);
     colors.push(col15.clone());
 
+    // Adding defined colors to the mix
+    colors.extend(gnerate_defined_colors(scheme));
+
     // Adding randomly generated colors to the mix
-    for _ in 0..12 {
+    for _ in 0..10 {
         let rng: &mut dyn RngCore = &mut thread_rng();
         let hue = rng.gen::<f64>() * 360.0;
         let saturation = 0.2 + 0.6 * rng.gen::<f64>();
@@ -215,7 +247,7 @@ pub fn get_all_colors(scheme: &mut Scheme) -> Vec<pastel::Color> {
     }
 
     let are_random = scheme.norandom().unwrap_or(false);
- 
+
     if are_random {
         for _ in 0..6 {
             let rng: &mut dyn RngCore = &mut thread_rng();
@@ -234,33 +266,20 @@ pub fn get_all_colors(scheme: &mut Scheme) -> Vec<pastel::Color> {
     } else {
         let lightish = gradients[2].clone();
         let darkish = gradients[21].clone();
-        
-        colors.extend(gen_shades(
-            vec![
-                &lightish,
-                &pastel::Color::from_rgb(255, 0, 0),
-                &darkish,
-                ],
-                24,
-            ));
-        colors.extend(gen_shades(
-            vec![
-                &lightish,
-                &pastel::Color::from_rgb(0, 255, 0),
-                &darkish,
-                ],
-                24,
-            ));
-        colors.extend(gen_shades(
-            vec![
-                &lightish,
-                &pastel::Color::from_rgb(0, 0, 255),
-                &darkish,
-                ],
-                24,
-            ));
-    }
 
+        colors.extend(gen_shades(
+            vec![&lightish, &pastel::Color::from_rgb(255, 0, 0), &darkish],
+            24,
+        ));
+        colors.extend(gen_shades(
+            vec![&lightish, &pastel::Color::from_rgb(0, 255, 0), &darkish],
+            24,
+        ));
+        colors.extend(gen_shades(
+            vec![&lightish, &pastel::Color::from_rgb(0, 0, 255), &darkish],
+            24,
+        ));
+    }
 
     // Adding the generated gradients to the final color vector
     colors.extend(gradients);
