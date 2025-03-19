@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.3.0] - 2025-03-19
+
+### <!-- 0 -->⛰️  Features
+
+- Enhance color generation functionality and streamline code
+
 ## [0.2.6] - 2024-02-07
 
 ### <!-- 0 -->⛰️  Features
