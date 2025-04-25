@@ -1,6 +1,6 @@
 [package]
 name = "lule"
-version = "0.3.0"
+version = "0.3.1"
 authors = ["Trim Bresilla <trim.bresilla@gmail.com>"]
 description = "a command line to set 255 colors on tty's and other places that use ANSI colors"
 edition = "2021"

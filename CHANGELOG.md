@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.3.1] - 2025-04-25
+
+### <!-- 7 -->⚙️ Miscellaneous Tasks
+
+- Refactor build and release processes
+
 ## [0.3.0] - 2025-03-19
 
 ### <!-- 0 -->⛰️  Features
