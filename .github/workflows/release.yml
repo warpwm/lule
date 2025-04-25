@@ -19,7 +19,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          TOOLCHAIN_VERSION : 1.70.0
+          TOOLCHAIN_VERSION : 1.80.0
           RUSTTARGET: ${{ matrix.target }}
           ARCHIVE_TYPES: "zip tar.gz"
           # ARCHIVE_NAME: "roc_${{ matrix.target }}"

@@ -4,3 +4,4 @@ vendor
 Cargo.lock
 devbox.lock
 .vscode
+.devbox
