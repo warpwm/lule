@@ -15,13 +15,15 @@ pub fn run(app: &clap::ArgMatches, scheme: &mut Scheme) -> Result<()> {
     let sub = app.subcommand_matches("daemon").unwrap();
     var::concatinate(app, scheme);
 
-    if atty::isnt(atty::Stream::Stdout) {
-        println!("you cant pipe out form this deamon");
-    } else if let Some(arg) = sub.value_of("action") {
+    let to_print: bool = app.is_present("no_pipe");
+
+    // if atty::isnt(atty::Stream::Stdout) {
+    // println!("you cant pipe out form this deamon");
+    if let Some(arg) = sub.value_of("action") {
         let mut lule_pipe = std::env::temp_dir();
         lule_pipe.push("lule_pipe");
         if arg == "start" {
-            deamoned(scheme)?;
+            deamoned(scheme, to_print)?;
         }
         if arg == "next" {
             text::write_to_file(lule_pipe.clone(), "stop".as_bytes());
@@ -43,7 +45,7 @@ pub fn run(app: &clap::ArgMatches, scheme: &mut Scheme) -> Result<()> {
                 .stdout(stdout)
                 .stderr(stderr);
             match lule.start() {
-                Ok(_) => deamoned(scheme)?,
+                Ok(_) => deamoned(scheme, to_print)?,
                 Err(e) => eprintln!("Error, {}", e),
             }
         }
@@ -51,7 +53,7 @@ pub fn run(app: &clap::ArgMatches, scheme: &mut Scheme) -> Result<()> {
     Ok(())
 }
 
-fn deamoned(scheme: &mut Scheme) -> Result<()> {
+fn deamoned(scheme: &mut Scheme, to_print: bool) -> Result<()> {
     let mut lule_pipe = std::env::temp_dir();
     lule_pipe.push("lule_pipe");
     std::fs::remove_file(lule_pipe.clone()).ok();
@@ -67,12 +69,16 @@ fn deamoned(scheme: &mut Scheme) -> Result<()> {
     apply::write_colors(scheme, false)?;
     loop {
         let jsonified = serde_json::to_value(&scheme).unwrap();
-        println!("{}", serde_json::to_string_pretty(&jsonified).unwrap());
+        if to_print {
+            println!("{}", serde_json::to_string_pretty(&jsonified).unwrap());
+        }
         'inner: loop {
             if let Ok(content) = piperx.try_recv() {
                 if let Ok(profile) = write::json_to_scheme(content.clone()) {
                     scheme.modi(&profile.clone());
-                    println!("{}", scheme.theme().clone().unwrap());
+                    if to_print {
+                        println!("{}", scheme.theme().clone().unwrap());
+                    }
                     apply::write_colors(scheme, false)?;
                     break 'inner;
                 } else if content.trim() == "next" {

@@ -36,7 +36,7 @@ pub fn build_cli<'a>(logo: &'a str) -> App<'static, 'a> {
         )
         .arg(
             Arg::with_name("cache")
-                .long("cache") 
+                .long("cache")
                 .value_name("PATH")
                 .help("specify a dir where to dump color caches")
                 .takes_value(true)
@@ -132,11 +132,17 @@ pub fn build_cli<'a>(logo: &'a str) -> App<'static, 'a> {
                         .set(ArgSettings::RequireEquals),
                 )
                 .arg(
+                    Arg::with_name("no_pipe")
+                        .long("no-pipe")
+                        .help("don't pipe colors to stdout")
+                        .takes_value(false),
+                )
+                .arg(
                     Arg::with_name("action")
                         .help("action to take")
                         .possible_values(&["start", "stop", "detach"])
                         .takes_value(true)
-                        .required(true)
+                        // .required(true)
                         .last(true),
                 ),
         )

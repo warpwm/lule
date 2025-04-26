@@ -14,7 +14,7 @@ pub fn command_execution(scheme: &mut Scheme) {
         for s in scripts.iter() {
             if std::fs::metadata(s).is_ok() {
                 external_command(s);
-                println!("running: {}", s)
+                // println!("running: {}", s)
             } else {
                 //TODO: better error handle
                 println!("{} is not a valid file", s)
