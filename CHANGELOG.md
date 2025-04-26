@@ -1,6 +1,10 @@
 # Changelog
 
-## [0.3.1] - 2025-04-25
+## [0.3.2] - 2025-04-26
+
+### <!-- 0 -->⛰️  Features
+
+- Make daemon subcommand output controllable
 
 ### <!-- 7 -->⚙️ Miscellaneous Tasks
 
