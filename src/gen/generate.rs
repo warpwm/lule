@@ -153,7 +153,7 @@ pub fn gen_gradients(
 
 pub fn gnerate_defined_colors(_scheme: &mut Scheme, theme: bool) -> Vec<pastel::Color> {
     let mut colors: Vec<pastel::Color> = Vec::new();
-    
+
     // Base colors (for dark theme)
     let base_colors = vec![
         pastel::Color::from_rgb(228, 228, 228),
@@ -181,7 +181,7 @@ pub fn gnerate_defined_colors(_scheme: &mut Scheme, theme: bool) -> Vec<pastel::
         pastel::Color::from_rgb(244, 175, 111),
         pastel::Color::from_rgb(205, 172, 252),
     ];
-    
+
     // For light theme, darken the colors for better visibility
     for color in base_colors {
         if theme {
@@ -189,10 +189,10 @@ pub fn gnerate_defined_colors(_scheme: &mut Scheme, theme: bool) -> Vec<pastel::
             colors.push(color);
         } else {
             // Light theme - darken colors for better visibility on light background
-            colors.push(color.darken(0.5));
+            colors.push(color.darken(0.3));
         }
     }
-    
+
     return colors;
 }
 
