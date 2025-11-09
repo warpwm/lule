@@ -1,4 +1,4 @@
-use crate::gen::apply;
+use crate::generator::apply;
 use crate::scheme::*;
 use crate::var;
 use anyhow::Result;

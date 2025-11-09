@@ -203,7 +203,7 @@ pub fn get_all_colors(scheme: &mut Scheme) -> Vec<pastel::Color> {
     let mut palette: Vec<pastel::Color> = Vec::new();
 
     // Populating palette with colors from the scheme
-    if let Some(ref cols) = scheme.pigments() {
+    if let Some(cols) = scheme.pigments() {
         for c in cols.iter() {
             palette.push(color_from_hex(c));
         }
@@ -249,9 +249,9 @@ pub fn get_all_colors(scheme: &mut Scheme) -> Vec<pastel::Color> {
     // Adding randomly generated colors to the mix
     for _ in 0..10 {
         let rng: &mut dyn RngCore = &mut thread_rng();
-        let hue = rng.gen::<f64>() * 360.0;
-        let saturation = 0.2 + 0.6 * rng.gen::<f64>();
-        let lightness = 0.3 + 0.4 * rng.gen::<f64>();
+        let hue = rng.gen_range(0.0..360.0);
+        let saturation = 0.2 + 0.6 * rng.gen_range(0.0..1.0);
+        let lightness = 0.3 + 0.4 * rng.gen_range(0.0..1.0);
         colors.extend(gen_shades(
             vec![
                 &col0,
@@ -267,9 +267,9 @@ pub fn get_all_colors(scheme: &mut Scheme) -> Vec<pastel::Color> {
     if are_random {
         for _ in 0..6 {
             let rng: &mut dyn RngCore = &mut thread_rng();
-            let hue = rng.gen::<f64>() * 360.0;
-            let saturation = 0.2 + 0.6 * rng.gen::<f64>();
-            let lightness = 0.3 + 0.4 * rng.gen::<f64>();
+            let hue = rng.gen_range(0.0..360.0);
+            let saturation = 0.2 + 0.6 * rng.gen_range(0.0..1.0);
+            let lightness = 0.3 + 0.4 * rng.gen_range(0.0..1.0);
             colors.extend(gen_shades(
                 vec![
                     &col0,

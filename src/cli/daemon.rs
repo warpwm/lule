@@ -6,8 +6,8 @@ use std::{thread, time};
 
 use crate::fun::fifo;
 use crate::fun::text;
-use crate::gen::apply;
-use crate::gen::write;
+use crate::generator::apply;
+use crate::generator::write;
 use crate::scheme::*;
 use crate::var;
 

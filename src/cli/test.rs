@@ -1,11 +1,11 @@
-use crate::gen::hex::color_from_hex;
-use crate::scheme::*;
 use anyhow::Result;
+use crate::generator::hex::color_from_hex;
+use crate::scheme::*;
 
 use crate::fun::text;
-use crate::gen::generate;
-use crate::gen::palette;
-use crate::gen::templ;
+use crate::generator::generate;
+use crate::generator::palette;
+use crate::generator::templ;
 use crate::show::format;
 use crate::show::viuwer;
 use crate::var;

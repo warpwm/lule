@@ -1,6 +1,6 @@
 mod cli;
 mod fun;
-mod gen;
+mod generator;
 mod scheme;
 mod show;
 mod var;

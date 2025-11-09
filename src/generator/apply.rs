@@ -1,8 +1,8 @@
 use crate::fun::text;
-use crate::gen::execute;
-use crate::gen::generate;
-use crate::gen::palette;
-use crate::gen::write;
+use crate::generator::execute;
+use crate::generator::generate;
+use crate::generator::palette;
+use crate::generator::write;
 use crate::scheme::*;
 use anyhow::Result;
 use std::path::PathBuf;

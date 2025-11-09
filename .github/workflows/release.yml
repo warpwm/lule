@@ -12,14 +12,16 @@ jobs:
       matrix:
         target: [x86_64-unknown-linux-musl]
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v4
+      - name: Install Rust nightly
+        uses: dtolnay/rust-toolchain@nightly
       - name: Compile and release
         id: compile
         uses: rust-build/rust-build.action@v1.4.3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          TOOLCHAIN_VERSION : 1.80.0
+          TOOLCHAIN_VERSION : nightly
           RUSTTARGET: ${{ matrix.target }}
           ARCHIVE_TYPES: "zip tar.gz"
           # ARCHIVE_NAME: "roc_${{ matrix.target }}"

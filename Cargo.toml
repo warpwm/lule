@@ -3,7 +3,7 @@ name = "lule"
 version = "0.4.0"
 authors = ["Trim Bresilla <trim.bresilla@gmail.com>"]
 description = "a command line to set 255 colors on tty's and other places that use ANSI colors"
-edition = "2021"
+edition = "2024"
 
 [dependencies]
 

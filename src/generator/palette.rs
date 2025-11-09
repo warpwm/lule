@@ -2,7 +2,7 @@ use colored::*;
 use std::path::PathBuf;
 
 use crate::fun::text;
-use crate::gen::kmeans;
+use crate::generator::kmeans;
 
 use super::hex::color_from_hex;
 

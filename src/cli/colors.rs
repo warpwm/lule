@@ -1,6 +1,6 @@
 use crate::fun::text;
-use crate::gen::apply;
-use crate::gen::palette;
+use crate::generator::apply;
+use crate::generator::palette;
 use crate::scheme::*;
 use crate::show::format;
 use crate::show::viuwer;
