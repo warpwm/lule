@@ -92,6 +92,6 @@ where
 }
 
 pub fn file_to_string(filename: PathBuf) -> Result<String, Box<dyn std::error::Error>> {
-    let string = file::get_text(filename.to_str().unwrap())?;
+    let string = fs::read_to_string(filename)?;
     Ok(string)
 }

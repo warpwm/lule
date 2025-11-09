@@ -6,7 +6,7 @@ description = "a command line to set 255 colors on tty's and other places that u
 edition = "2021"
 
 [dependencies]
-file = "1.1.2"
+
 dirs = "3.0.1"
 atty = "0.2.14"
 clap = "2.33.3"

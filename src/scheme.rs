@@ -2,6 +2,7 @@
 
 extern crate getset;
 use getset::{CopyGetters, Getters, MutGetters, Setters};
+use serde_derive::{Serialize, Deserialize};
 use std::collections::HashMap as Map;
 
 #[derive(Serialize, Deserialize, Debug, Clone, CopyGetters, Getters, MutGetters, Setters)]
