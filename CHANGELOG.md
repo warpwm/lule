@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.4.0] - 2025-11-09
+
+### <!-- 5 -->🎨 Styling
+
+- Improve color contrast of light themes
+
 ## [0.3.2] - 2025-11-09
 
 ### <!-- 2 -->🚜 Refactor
