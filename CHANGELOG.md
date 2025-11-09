@@ -2,6 +2,20 @@
 
 ## [0.4.0] - 2025-11-09
 
+### <!-- 0 -->⛰️  Features
+
+- Update dev dependencies and reorganize generation module
+
+### <!-- 5 -->🎨 Styling
+
+- Improve color contrast of light themes
+
+### <!-- 7 -->⚙️ Miscellaneous Tasks
+
+- Downgrade package version to 0.3.9
+
+## [0.4.0] - 2025-11-09
+
 ### <!-- 5 -->🎨 Styling
 
 - Improve color contrast of light themes
