@@ -2,6 +2,7 @@
 
 extern crate getset;
 use getset::{CopyGetters, Getters, MutGetters, Setters};
+use serde_derive::{Serialize, Deserialize};
 use std::collections::HashMap as Map;
 
 #[derive(Serialize, Deserialize, Debug, Clone, CopyGetters, Getters, MutGetters, Setters)]
@@ -29,6 +30,7 @@ pub struct Scheme {
     difference: Option<f32>,
     blend: Option<f32>,
     mixes: Option<Map<usize, String>>,
+    norandom: Option<bool>,
 }
 
 impl Scheme {
@@ -53,6 +55,7 @@ impl Scheme {
             difference: None,
             blend: None,
             mixes: None,
+            norandom: None,
         }
     }
     pub fn modi(&mut self, new: &Scheme) -> &Self {
@@ -109,6 +112,9 @@ impl Scheme {
         }
         if let Some(value) = new.mixes() {
             self.mixes = Some(value.clone());
+        }
+        if let Some(value) = new.norandom() {
+            self.norandom = Some(*value);
         }
         self
     }

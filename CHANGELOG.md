@@ -1,20 +1,64 @@
-## 0.1.0 - 2020-02-02
+# Changelog
 
-### Added
-- Initial commit with source files
-- Contributors' name [AUTHORS.md]
-- Chronological changes [CHANGELOG.md]
-- Readme file with documentation [README.md]
-- Licence file [LICENCE.md]
-- Contributing guide [CONTRIBUTING.md]
+## [0.3.2] - 2025-11-09
 
-[AUTHORS.md]: AUTHORS.md
-[CHANGELOG.md]: CHANGELOG.md
-[CONTRIBUTING.md]: CONTRIBUTING.md
-[LICENCE.md]: LICENCE.md
-[README.md]: README.md
-[Keep a Changelog]: http://keepachangelog.com
-[Semantic Versioning]: http://semver.org/
+### <!-- 2 -->🚜 Refactor
 
-[unreleased]: https://github.com/${USER}/${REPO}/compare/0.1.0...HEAD
-[0.1.1]: https://github.com/${USER}/${REPO}/compare/0.1.0...0.1.1
+- Introduce Makefile for development and refactor file handling
+
+## [0.3.1] - 2025-04-25
+
+### <!-- 7 -->⚙️ Miscellaneous Tasks
+
+- Refactor build and release processes
+
+## [0.3.0] - 2025-03-19
+
+### <!-- 0 -->⛰️  Features
+
+- Enhance color generation functionality and streamline code
+
+## [0.2.6] - 2024-02-07
+
+### <!-- 0 -->⛰️  Features
+
+- Decided to use "tera" at the end as template engine
+- Swap templr with handlebars package
+- Improve color generation with `norandom` flag
+
+## [0.2.5] - 2024-02-07
+
+### <!-- 2 -->🚜 Refactor
+
+- Refactor color generation and gradient access
+
+### <!-- 7 -->⚙️ Miscellaneous Tasks
+
+- Refactor file structure for better organization
+
+## [0.2.4] - 2024-02-07
+
+### <!-- 0 -->⛰️  Features
+
+- Refactor color generation and scheme in gen/generate.rs
+
+## [0.2.0] - 2024-02-07
+
+### <!-- 3 -->📚 Documentation
+
+- Update README.md with required environment variables and example code
+
+### <!-- 7 -->⚙️ Miscellaneous Tasks
+
+- Refactor color generation and file organization
+- Configure changelog generation, devbox setup, and aliases
+
+### ADD
+
+- Added ryon for paralell processing
+
+### IMPORTANT
+
+- Removed WRITE struct
+
+<!-- WARP -->

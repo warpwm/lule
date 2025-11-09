@@ -1,4 +1,5 @@
-# cat $TMP/lule_colors > $HOME/.cache/wal/colors
+#!/bin/bash
+
 cp $TEMP/lule_colors $HOME/.cache/wal/colors
 cp $TEMP/lule_theme $HOME/.cache/wal/theme
 cp $TEMP/lule_wallpaper $HOME/.cache/wal/wallpaper
@@ -14,65 +15,49 @@ create_files(){
     printf "foreground=\"$fore\"\nbackground=\"$back\"\ncursor=\"$col1\"\n" > $HOME/.cache/wal/colors.sh
     awk '{print "color" NR-1 "=\"" $0 "\""}' $HOME/.cache/wal/colors >> $HOME/.cache/wal/colors.sh
 
-    # COLORS.YAML (used by ALACRITY)
-    printf "special:\n\tbackground: \"$back\"\n\tforeground: \"$fore\"\n\tcursor: \"$col1\"\n\ncolors:\n" > $HOME/.cache/wal/colors.yml
-    awk '{print "\tcolor" NR-1 ": \"" $0 "\""}' $HOME/.cache/wal/colors >> $HOME/.cache/wal/colors.yml
-
     # COLORS.JSON (used by FREFOX)
     printf "{\n\t\"wallpaper\": \"$wallpaper\",\n\t\"theme\": \"$theme\",\n" > $HOME/.cache/wal/colors.json
     printf "\t\"special\": {\n\t\t\"background\": \"$back\",\n\t\t\"foreground\": \"$fore\",\n\t\t\"cursor\": \"$col1\"\n\t},\n\t\"colors\": {\n" >> $HOME/.cache/wal/colors.json
     awk '{print "\t\t\"color" NR-1 "\": \"" $0 "\","}' $HOME/.cache/wal/colors >> $HOME/.cache/wal/colors.json
     truncate -s-2 $HOME/.cache/wal/colors.json; printf "\n\t}\n}" >> $HOME/.cache/wal/colors.json
 
+    # COLORS.YAML (used by ALACRITY)
+    # cat ~/.cache/wal/colors.json | jq | yq -y > $HOME/.cache/wal/colors.yml
+    printf "special:\n  background: \"$back\"\n  foreground: \"$fore\"\n  cursor: \"$col1\"\n\ncolors:\n" > $HOME/.cache/wal/colors.yml
+    awk '{print "  color" NR-1 ": \"" $0 "\""}' $HOME/.cache/wal/colors >> $HOME/.cache/wal/colors.yml
+
     # COLORS.INI (used by POLYBAR)
     printf "[colors]\n\tforeground=$fore\n\tbackground=$back\n\tcursor=$col1\n" > $HOME/.cache/wal/colors.ini
     awk '{print "\tcolor" NR-1 "=" $0 }' $HOME/.cache/wal/colors >> $HOME/.cache/wal/colors.ini
+ 
+    # COLORS.SCSS (used for STYLING)
+    printf "\$foreground: $fore;\n\$background: $back;\n\n" > $HOME/.cache/wal/colors.scss
+    awk '{print "$color" NR-1 ": " $0 ";"}' $HOME/.cache/wal/colors >> $HOME/.cache/wal/colors.scss
+ 
+    # COLORS.RASI (used for STYLING)
+    printf "* {\n\tforeground: $fore;\n\tbackground: $back;\n" > $HOME/.cache/wal/colors.rasi
+    awk '{print "\tcolor" NR-1 ": " $0 ";"}' $HOME/.cache/wal/colors >> $HOME/.cache/wal/colors.rasi
+    printf "}" >> $HOME/.cache/wal/colors.rasi
 
     # COLORS.CONF (used by KITTY)
     printf "foreground\t$fore\nbackground\t$back\ncursor\t$col1\n\n" > $HOME/.cache/wal/colors.conf
     awk '{print "color" NR-1 "\t " $0}' $HOME/.cache/wal/colors >> $HOME/.cache/wal/colors.conf
 
+    # COLORS_W.CONF (used by HYPR)
+    printf "\$foreground=rgb(${fore//#})\n\$background=rgb(${back//#})\n\n" > $HOME/.cache/wal/colors_hypr.conf
+    awk '{print "$color" NR-1 "=rgb("substr($0, 2)")"}' $HOME/.cache/wal/colors >> $HOME/.cache/wal/colors_hypr.conf
+
     # SEQUENCES (escape codes sent to all '/dev/pts/*')
     printf "]10;$fore\\]11;$back\\]12;$col1\\]13;$back\\]17;$col1\\]19;$back\\" > $HOME/.cache/wal/sequences
     awk '{print "]4;" NR-1 ";" $0"\\"}' ORS='' $HOME/.cache/wal/colors >> $HOME/.cache/wal/sequences
+
+    #update logo colors
+    sed -i "s/fill=\"#\([^\"]*\)\"/fill=\"$col1\"/" /home/bresilla/.config/bresilla.svg
 }
 
 create_files
 
-
 #sent color sequences to all ppts (most important piece of this script)
-colors_to_tty(){
-    for tt in /dev/pts/*; do
-        re='^[0-9]+$'; [[ $(basename $tt) =~ $re ]] && cat $HOME/.cache/wal/sequences > $tt;
-    done
-}
-colors_to_tty &
-
-
-#apply all colors (or specific command) to nvim needs 'pip install neovim-remote' and 'lsof'
-colors_to_nvim(){
-    if command -v nvr &> /dev/null ; then
-        for i in `pidof nvim`; do
-            for e in `lsof -p "$i" | grep LISTEN | awk -v N=$9 '{print $9}'`; do
-                nvr --nostart --servername $e -c ":lua mycolors(\"$(cat $HOME/.cache/wal/theme)\")" &
-            done
-        done
-    else
-        1>&2 printf "executable nvr is not fond in your \$PATH, install it with 'pip install neovim-remote'\n"
-    fi
-}
-colors_to_nvim &
-
-#colors awesomewm
-awesome-client 'require("beautiful").init(require("awful").util.getdir("config") .. "theme.lua" )'
-
-source $HOME/.cache/wal/colors.sh
-
-bspc config focused_border_color $color1 &
-bspc config normal_border_color $color239 &
-bspc config active_border_color $color239 &
-
-
-python $HOME/.local/bin/pywalfox update &
-
-feh --no-fehbg --bg-scale $(cat $TMP/lule_wallpaper) &
+for tt in /dev/pts/*; do
+    re='^[0-9]+$'; [[ $(basename $tt) =~ $re ]] && cat $HOME/.cache/wal/sequences > $tt;
+done

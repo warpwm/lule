@@ -1,32 +1,37 @@
+// Importing necessary crates and modules
+use super::hex::color_from_hex;
 use crate::scheme::*;
 use rand::prelude::*;
 
-use super::hex::color_from_hex;
-
+// Helper function to generate the main six colors based on provided colors
 pub fn gen_main_six(col: &[pastel::Color]) -> Vec<pastel::Color> {
+    // Filtering colors based on lightness criteria
     let mut colors = col.to_owned();
     colors.retain(|x| x.to_lab().l > 20.0);
     colors.retain(|x| x.to_lab().l < 80.0);
 
+    // Sorting and reversing colors based on lightness
     colors.sort_by_key(|c| (c.to_lch().l) as i32);
     colors.reverse();
 
+    // Ensuring there are six colors by adding complementary colors
     let mut i = 0;
     while colors.len() < 6 {
         colors.push(pastel::Color::complementary(&colors[i]));
         i += 1;
     }
 
+    // Selecting the top six colors and sorting them based on chroma
     let mut main_colors: Vec<pastel::Color> = Vec::new();
     for color in colors.iter().take(6) {
         main_colors.push(color.clone())
     }
-
     main_colors.sort_by_key(|c| (c.to_lch().c) as i32);
     main_colors.reverse();
     main_colors
 }
 
+// Helper function to get black and white colors mixed with a given color
 pub fn get_black_white(
     ac: &pastel::Color,
     black_mix: f64,
@@ -37,6 +42,7 @@ pub fn get_black_white(
     let white = pastel::Color::from_rgb(255, 255, 255);
     let dark = black.mix::<pastel::RGBA<f64>>(ac, pastel::Fraction::from(black_mix));
     let light = white.mix::<pastel::RGBA<f64>>(ac, pastel::Fraction::from(white_mix));
+    // Choosing the appropriate order based on the theme
     if theme {
         (dark, light)
     } else {
@@ -44,11 +50,13 @@ pub fn get_black_white(
     }
 }
 
+// Helper function to get two gray colors mixed with a given color
 pub fn get_two_grays(ac: &pastel::Color, mix: f64, theme: bool) -> (pastel::Color, pastel::Color) {
     let darker = pastel::Color::from_rgb(100, 100, 100);
     let lighter = pastel::Color::from_rgb(170, 170, 170);
     let dark = darker.mix::<pastel::RGBA<f64>>(ac, pastel::Fraction::from(mix));
     let light = lighter.mix::<pastel::RGBA<f64>>(ac, pastel::Fraction::from(mix));
+    // Choosing the appropriate order based on the theme
     if theme {
         (dark, light)
     } else {
@@ -56,10 +64,12 @@ pub fn get_two_grays(ac: &pastel::Color, mix: f64, theme: bool) -> (pastel::Colo
     }
 }
 
+// Helper function to generate a set of colors based on a mix factor and theme
 pub fn gen_prime_six(colors: Vec<pastel::Color>, mix: f64, theme: bool) -> Vec<pastel::Color> {
     let mut second_colors: Vec<pastel::Color> = Vec::new();
 
     for col in colors.iter() {
+        // Lightening or darkening each color based on the theme
         let new_col = if theme {
             col.lighten(mix)
         } else {
@@ -70,10 +80,12 @@ pub fn gen_prime_six(colors: Vec<pastel::Color>, mix: f64, theme: bool) -> Vec<p
     second_colors
 }
 
+// Helper function similar to gen_prime_six but with a different condition
 pub fn gen_second_six(colors: Vec<pastel::Color>, mix: f64, theme: bool) -> Vec<pastel::Color> {
     let mut second_colors: Vec<pastel::Color> = Vec::new();
 
     for col in colors.iter() {
+        // Lightening or darkening each color based on the theme
         let new_col = if !theme {
             col.lighten(mix)
         } else {
@@ -84,15 +96,18 @@ pub fn gen_second_six(colors: Vec<pastel::Color>, mix: f64, theme: bool) -> Vec<
     second_colors
 }
 
+// Helper function to generate shades between given colors
 pub fn gen_shades(colors: Vec<&pastel::Color>, number: u8) -> Vec<pastel::Color> {
     let mut color_scale = pastel::ColorScale::empty();
     let mut gradients: Vec<pastel::Color> = Vec::new();
 
+    // Creating a color scale based on provided colors
     for (i, color) in colors.iter().enumerate() {
         let position = pastel::Fraction::from(i as f64 / (colors.len() as f64 - 1.0));
         color_scale.add_stop((*color).clone(), position);
     }
 
+    // Generating shades between colors using the color scale
     let mix = Box::new(
         |c1: &pastel::Color, c2: &pastel::Color, f: pastel::Fraction| c1.mix::<pastel::Lab>(c2, f),
     );
@@ -100,6 +115,7 @@ pub fn gen_shades(colors: Vec<&pastel::Color>, number: u8) -> Vec<pastel::Color>
     for i in 0..count {
         let position = pastel::Fraction::from(i as f64 / (count as f64 - 1.0));
         let color = color_scale.sample(position, &mix).expect("gradient color");
+        // Skipping the first and last colors to avoid duplicates
         if i == 0 || i == count - 1 {
             continue;
         }
@@ -108,6 +124,7 @@ pub fn gen_shades(colors: Vec<&pastel::Color>, number: u8) -> Vec<pastel::Color>
     gradients
 }
 
+// Helper function to generate gradients using a set of colors
 pub fn gen_gradients(
     ac: pastel::Color,
     col0: pastel::Color,
@@ -117,28 +134,85 @@ pub fn gen_gradients(
 ) -> Vec<pastel::Color> {
     let mut gradients: Vec<pastel::Color> = Vec::new();
 
+    // Adding black as the starting color
     gradients.push(black.clone());
+    // Generating shades between black and col0
     let blacks = gen_shades(vec![&black, &col0], 3);
     gradients.extend(blacks);
+    // Generating shades between col0, ac, and col15
     let middle = gen_shades(vec![&col0, &ac, &col15], 16);
     gradients.extend(middle);
+    // Generating shades between col15 and white
     let whites = gen_shades(vec![&col15, &white], 3);
     gradients.extend(whites);
+    // Adding white as the ending color
     gradients.push(white.clone());
 
     gradients
 }
 
+pub fn gnerate_defined_colors(_scheme: &mut Scheme, theme: bool) -> Vec<pastel::Color> {
+    let mut colors: Vec<pastel::Color> = Vec::new();
+
+    // Base colors (for dark theme)
+    let base_colors = vec![
+        pastel::Color::from_rgb(228, 228, 228),
+        pastel::Color::from_rgb(148, 148, 148),
+        pastel::Color::from_rgb(198, 198, 132),
+        pastel::Color::from_rgb(227, 199, 138),
+        pastel::Color::from_rgb(238, 239, 159),
+        pastel::Color::from_rgb(222, 147, 95),
+        pastel::Color::from_rgb(240, 143, 133),
+        pastel::Color::from_rgb(225, 150, 162),
+        pastel::Color::from_rgb(255, 203, 251),
+        pastel::Color::from_rgb(133, 220, 130),
+        pastel::Color::from_rgb(136, 196, 95),
+        pastel::Color::from_rgb(54, 198, 146),
+        pastel::Color::from_rgb(126, 218, 200),
+        pastel::Color::from_rgb(128, 160, 255),
+        pastel::Color::from_rgb(138, 175, 255),
+        pastel::Color::from_rgb(116, 178, 255),
+        pastel::Color::from_rgb(173, 205, 243),
+        pastel::Color::from_rgb(174, 129, 255),
+        pastel::Color::from_rgb(207, 135, 238),
+        pastel::Color::from_rgb(230, 94, 114),
+        pastel::Color::from_rgb(255, 81, 137),
+        pastel::Color::from_rgb(255, 84, 84),
+        pastel::Color::from_rgb(244, 175, 111),
+        pastel::Color::from_rgb(205, 172, 252),
+    ];
+
+    // For light theme, darken the colors for better visibility
+    for color in base_colors {
+        if theme {
+            // Dark theme - use original colors
+            colors.push(color);
+        } else {
+            // Light theme - darken colors for better visibility on light background
+            colors.push(color.darken(0.3));
+        }
+    }
+
+    return colors;
+}
+
+// Function to get all colors based on the provided color scheme
 pub fn get_all_colors(scheme: &mut Scheme) -> Vec<pastel::Color> {
+    // Checking the theme of the color scheme
     let theme = scheme.theme().as_ref().unwrap_or(&"dark".to_string()) != "light";
     let mut palette: Vec<pastel::Color> = Vec::new();
+
+    // Populating palette with colors from the scheme
     if let Some(ref cols) = scheme.pigments() {
         for c in cols.iter() {
             palette.push(color_from_hex(c));
         }
     }
+
+    // Generating the main six colors
     let main = gen_main_six(&palette);
 
+    // Initializing black and white colors based on the theme
     let mut black = pastel::Color::from_rgb(0, 0, 0);
     let mut white = pastel::Color::from_rgb(255, 255, 255);
     if !theme {
@@ -146,14 +220,21 @@ pub fn get_all_colors(scheme: &mut Scheme) -> Vec<pastel::Color> {
         black = pastel::Color::from_rgb(255, 255, 255);
     }
 
+    // Generating the prime colors based on main, with adjustments
     let prime = gen_prime_six(main.clone(), 0.1, theme);
     let acc = prime.get(0).unwrap().clone();
+
+    // Generating two additional colors for shades
     let (col0, col15) = get_black_white(&acc, 0.08, 0.12, theme);
     let (col7, col8) = get_two_grays(&acc, 0.2, theme);
+
+    // Generating the second set of six colors based on main, with adjustments
     let second = gen_second_six(main.clone(), 0.1, theme);
 
+    // Generating gradients using various colors
     let gradients = gen_gradients(acc.clone(), col0.clone(), col15.clone(), black, white);
 
+    // Combining all colors into a final vector
     let mut colors: Vec<pastel::Color> = Vec::new();
     colors.push(col0.clone());
     colors.extend(prime);
@@ -162,7 +243,11 @@ pub fn get_all_colors(scheme: &mut Scheme) -> Vec<pastel::Color> {
     colors.extend(second);
     colors.push(col15.clone());
 
-    for _ in 0..18 {
+    // Adding defined colors to the mix
+    colors.extend(gnerate_defined_colors(scheme, theme));
+
+    // Adding randomly generated colors to the mix
+    for _ in 0..10 {
         let rng: &mut dyn RngCore = &mut thread_rng();
         let hue = rng.gen::<f64>() * 360.0;
         let saturation = 0.2 + 0.6 * rng.gen::<f64>();
@@ -177,6 +262,42 @@ pub fn get_all_colors(scheme: &mut Scheme) -> Vec<pastel::Color> {
         ));
     }
 
+    let are_random = scheme.norandom().unwrap_or(false);
+
+    if are_random {
+        for _ in 0..6 {
+            let rng: &mut dyn RngCore = &mut thread_rng();
+            let hue = rng.gen::<f64>() * 360.0;
+            let saturation = 0.2 + 0.6 * rng.gen::<f64>();
+            let lightness = 0.3 + 0.4 * rng.gen::<f64>();
+            colors.extend(gen_shades(
+                vec![
+                    &col0,
+                    &pastel::Color::from_hsl(hue, saturation, lightness),
+                    &col15,
+                ],
+                12,
+            ));
+        }
+    } else {
+        let lightish = gradients[2].clone();
+        let darkish = gradients[21].clone();
+
+        colors.extend(gen_shades(
+            vec![&lightish, &pastel::Color::from_rgb(255, 0, 0), &darkish],
+            24,
+        ));
+        colors.extend(gen_shades(
+            vec![&lightish, &pastel::Color::from_rgb(0, 255, 0), &darkish],
+            24,
+        ));
+        colors.extend(gen_shades(
+            vec![&lightish, &pastel::Color::from_rgb(0, 0, 255), &darkish],
+            24,
+        ));
+    }
+
+    // Adding the generated gradients to the final color vector
     colors.extend(gradients);
     colors
 }

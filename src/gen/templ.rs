@@ -2,8 +2,7 @@ use crate::fun::text;
 use crate::scheme::*;
 use anyhow::Result;
 use std::path::PathBuf;
-use templar;
-use templar::*;
+use tera::{Context, Tera};
 
 fn generate_template(original: PathBuf, replaced: PathBuf, scheme: &Scheme) -> Result<()> {
     let mut content = String::new();
@@ -11,46 +10,43 @@ fn generate_template(original: PathBuf, replaced: PathBuf, scheme: &Scheme) -> R
         content = cont;
     }
 
-    // if let Err(e) = templar::Templar::global().parse(&content) {
-    //     println!("{}", e);
-    // };
+    let mut tera = Tera::default();
+    tera.add_raw_template("template", &content)?;
 
-    let template = templar::Templar::global().parse(&content)?;
-    let mut data: templar::Document = templar::Document::default();
+    let mut context = Context::new();
+
     if let Some(colors) = scheme.colors() {
         for (i, color) in colors.iter().enumerate() {
-            let name = "color".to_string() + &i.to_string();
-            data[name] = color.to_rgb_hex_string(false).into();
+            let name = format!("color{}", i);
+            context.insert(name, &color.to_rgb_hex_string(false));
         }
-        data["background"] = colors[0].to_rgb_hex_string(false).into();
-        data["foreground"] = colors[15].to_rgb_hex_string(false).into();
-        data["cursor"] = colors[1].to_rgb_hex_string(false).into();
-        data["accent"] = colors[1].to_rgb_hex_string(false).into();
+        context.insert("background", &colors[0].to_rgb_hex_string(false));
+        context.insert("foreground", &colors[15].to_rgb_hex_string(false));
+        context.insert("cursor", &colors[1].to_rgb_hex_string(false));
+        context.insert("accent", &colors[1].to_rgb_hex_string(false));
     }
 
     if let Some(wallpaper) = scheme.image() {
-        data["wallpaper"] = wallpaper.into();
+        context.insert("wallpaper", &wallpaper);
     }
     if let Some(theme) = scheme.theme() {
-        data["theme"] = theme.into();
+        context.insert("theme", &theme);
     }
 
-    let context = templar::StandardContext::new();
-    context.set(data)?;
-
-    let new_content = (template.render(&context)?).to_string();
+    let new_content = tera.render("template", &context)?;
     text::write_to_file(replaced, new_content.as_bytes());
+
     Ok(())
 }
 
-pub fn pattern_gneration(scheme: &mut Scheme) -> Result<()> {
+pub fn pattern_generation(scheme: &mut Scheme) -> Result<()> {
     if let Some(patterns) = scheme.patterns() {
         for p in patterns.iter() {
             if std::fs::metadata(&p.0).is_ok() && std::fs::metadata(&p.1).is_ok() {
                 generate_template(PathBuf::from(&p.0), PathBuf::from(&p.1), scheme)?;
                 println!("generating :{} into: {}", p.0, p.1)
             } else {
-                //TODO: better error handle
+                // TODO: better error handle
                 println!("{} or {} is not a valid file", p.0, p.1)
             }
         }
