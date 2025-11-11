@@ -16,9 +16,21 @@ use std::env;
 fn main() {
     let mut scheme = Scheme::init();
 
-    let show_logo = env::args().len() <= 1;
+    let show_logo = env::args().len() <= 1 && atty::is(atty::Stream::Stdout);
     let logo = if show_logo {
-        std::fs::read_to_string("resources/logo.txt").unwrap_or(String::new())
+        // Try to read logo from executable's directory first, fallback to relative path
+        let exe_dir = env::current_exe()
+            .ok()
+            .and_then(|p| p.parent().map(|p| p.to_path_buf()));
+        
+        let logo_path = exe_dir
+            .as_ref()
+            .map(|p| p.join("../resources/logo.txt"))
+            .and_then(|p| std::fs::read_to_string(p).ok())
+            .or_else(|| std::fs::read_to_string("resources/logo.txt").ok())
+            .unwrap_or(String::new());
+        
+        logo_path
     } else {
         String::new()
     };

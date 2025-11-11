@@ -1,0 +1,33 @@
+[Unit]
+Description=Lule Color Daemon
+After=network.target
+
+[Service]
+Type=simple
+# Replace with your actual username
+User=%i
+# Ensure the working directory is set correctly
+WorkingDirectory=/home/%i
+
+# Set required environment variables
+Environment="LULE_W=/home/%i/.wallpaper"
+Environment="LULE_S=/home/%i/.config/lule/apply_colors.sh"
+Environment="LULE_C=/home/%i/.config/lule/config.json"
+Environment="LULE_A=/home/%i/.cache/lule"
+
+# Set display for X11 (adjust if needed)
+Environment="DISPLAY=:0"
+
+# Path to the lule binary (adjust as needed)
+ExecStart=/usr/local/bin/lule daemon start
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+
+# Restart on failure
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

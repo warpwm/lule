@@ -15,9 +15,7 @@ pub fn run(app: &clap::ArgMatches, scheme: &mut Scheme) -> Result<()> {
     let sub = app.subcommand_matches("daemon").unwrap();
     var::concatinate(app, scheme);
 
-    if atty::isnt(atty::Stream::Stdout) {
-        println!("you cant pipe out form this deamon");
-    } else if let Some(arg) = sub.value_of("action") {
+    if let Some(arg) = sub.value_of("action") {
         let mut lule_pipe = std::env::temp_dir();
         lule_pipe.push("lule_pipe");
         if arg == "start" {
@@ -66,13 +64,17 @@ fn deamoned(scheme: &mut Scheme) -> Result<()> {
 
     apply::write_colors(scheme, false)?;
     loop {
-        let jsonified = serde_json::to_value(&scheme).unwrap();
-        println!("{}", serde_json::to_string_pretty(&jsonified).unwrap());
+        if atty::is(atty::Stream::Stdout) {
+            let jsonified = serde_json::to_value(&scheme).unwrap();
+            println!("{}", serde_json::to_string_pretty(&jsonified).unwrap());
+        }
         'inner: loop {
             if let Ok(content) = piperx.try_recv() {
                 if let Ok(profile) = write::json_to_scheme(content.clone()) {
                     scheme.modi(&profile.clone());
-                    println!("{}", scheme.theme().clone().unwrap());
+                    if atty::is(atty::Stream::Stdout) {
+                        println!("{}", scheme.theme().clone().unwrap());
+                    }
                     apply::write_colors(scheme, false)?;
                     break 'inner;
                 } else if content.trim() == "next" {
@@ -82,7 +84,9 @@ fn deamoned(scheme: &mut Scheme) -> Result<()> {
                 } else if content.trim() == "stop" {
                     std::process::exit(0);
                 } else {
-                    println!("{} \n\n^^^ is not a valid json", content);
+                    if atty::is(atty::Stream::Stdout) {
+                        println!("{} \n\n^^^ is not a valid json", content);
+                    }
                 }
             };
             if timerx.try_recv().is_ok() {
