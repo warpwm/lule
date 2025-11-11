@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.4.1] - 2025-11-11
+
+### <!-- 3 -->📚 Documentation
+
+- Refactor daemon for TTY-less operation and service integration
+
 ## [0.4.0] - 2025-11-09
 
 ### <!-- 0 -->⛰️  Features
